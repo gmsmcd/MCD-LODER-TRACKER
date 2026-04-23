@@ -3,78 +3,120 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>MCD SUBCONTRACT TRACKER</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMS MCD SUB-CONTRACT LOAD TRACKER</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+    * { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .font-bold { font-family: 'Poppins', sans-serif; }
+    .tab-active { background: var(--c-primary); color: #fff; }
+    .tab-inactive { background: var(--c-surface); color: var(--c-text); }
+    :root {
+      --c-bg: #0f172a;
+      --c-surface: #1e293b;
+      --c-text: #e2e8f0;
+      --c-primary: #3b82f6;
+      --c-secondary: #475569;
+    }
+    html, body { height: 100%; margin: 0; }
+    input, select, textarea {
+      background: var(--c-bg) !important;
+      border: 1px solid var(--c-secondary) !important;
+      color: var(--c-text) !important;
+      border-radius: 8px;
+      padding: 10px 12px;
+      width: 100%;
+      font-size: 15px;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c-primary) !important; }
+    .card { background: var(--c-surface); border-radius: 12px; padding: 20px; }
+    .btn-primary { background: var(--c-primary); color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: opacity .2s; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary { background: var(--c-secondary); color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: opacity .2s; }
+    .btn-secondary:hover { opacity: .85; }
+    .btn-print { background: #10b981; color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; transition: opacity .2s; }
+    .btn-print:hover { opacity: .85; }
+    .badge-paid { background: #22c55e22; color: #4ade80; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-unpaid { background: #ef444422; color: #f87171; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .toast { position: fixed; bottom: 20px; right: 20px; padding: 14px 24px; border-radius: 10px; color: #fff; font-weight: 600; z-index: 9999; animation: slideIn .3s ease; }
+    @keyframes slideIn { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .stat-card { background: linear-gradient(135deg, var(--c-surface), #1a2744); border: 1px solid #334155; border-radius: 14px; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #94a3b8; border-bottom: 1px solid #334155; }
+    td { padding: 10px 12px; border-bottom: 1px solid #1e293b; font-size: 14px; }
+    tr:hover td { background: #3b82f633; }
+    .modal-overlay { position: fixed; inset: 0; background: #00000088; z-index: 9000; display: none; align-items: center; justify-content: center; }
+    .modal-overlay:not(.hidden) { display: flex; }
+    .modal-overlay.hidden { display: none !important; }
+    .modal-box { background: var(--c-surface); border-radius: 14px; padding: 28px; max-width: 440px; width: 90%; max-height:90vh; overflow-y:auto; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--c-secondary); border-radius: 3px; }
+    @media (max-width: 768px) {
+      .hide-mobile { display: none !important; }
+      .mobile-full { grid-template-columns: 1fr !important; }
+    }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .sync-dot.online { background: #22c55e; box-shadow: 0 0 6px #22c55e88; }
+    .sync-dot.offline { background: #ef4444; box-shadow: 0 0 6px #ef444488; }
+    .sync-dot.syncing { background: #f59e0b; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
 
-  </head>
-    
-  <body>
-  <!doctype html>
-<html lang="en" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GMS MCD SUB-CONTRACT LOAD TRACKER</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-  <style>
-  * { font-family: 'Inter', sans-serif; }
-  h1, h2, h3, .font-bold { font-family: 'Poppins', sans-serif; }
-  .tab-active { background: var(--c-primary); color: #fff; }
-  .tab-inactive { background: var(--c-surface); color: var(--c-text); }
-  :root {
-    --c-bg: #0f172a;
-    --c-surface: #1e293b;
-    --c-text: #e2e8f0;
-    --c-primary: #3b82f6;
-    --c-secondary: #475569;
-  }
-  html, body { height: 100%; margin: 0; }
-  input, select, textarea {
-    background: var(--c-bg) !important;
-    border: 1px solid var(--c-secondary) !important;
-    color: var(--c-text) !important;
-    border-radius: 8px;
-    padding: 10px 12px;
-    width: 100%;
-    font-size: 15px;
-  }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c-primary) !important; }
-  .card { background: var(--c-surface); border-radius: 12px; padding: 20px; }
-  .btn-primary { background: var(--c-primary); color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: opacity .2s; }
-  .btn-primary:hover { opacity: .85; }
-  .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
-  .btn-secondary { background: var(--c-secondary); color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: opacity .2s; }
-  .btn-secondary:hover { opacity: .85; }
-  .badge-paid { background: #22c55e22; color: #4ade80; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-  .badge-unpaid { background: #ef444422; color: #f87171; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-  .toast { position: fixed; bottom: 20px; right: 20px; padding: 14px 24px; border-radius: 10px; color: #fff; font-weight: 600; z-index: 9999; animation: slideIn .3s ease; }
-  @keyframes slideIn { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .stat-card { background: linear-gradient(135deg, var(--c-surface), #1a2744); border: 1px solid #334155; border-radius: 14px; padding: 20px; }
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #94a3b8; border-bottom: 1px solid #334155; }
-  td { padding: 10px 12px; border-bottom: 1px solid #1e293b; font-size: 14px; }
-  tr:hover td { background: #1e293b88; }
-  .modal-overlay { position: fixed; inset: 0; background: #00000088; z-index: 9000; display: none; align-items: center; justify-content: center; }
-  .modal-overlay:not(.hidden) { display: flex; }
-  .modal-overlay.hidden { display: none !important; }
-  .modal-box { background: var(--c-surface); border-radius: 14px; padding: 28px; max-width: 440px; width: 90%; max-height:90vh; overflow-y:auto; }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--c-bg); }
-  ::-webkit-scrollbar-thumb { background: var(--c-secondary); border-radius: 3px; }
-  @media (max-width: 768px) {
-    .hide-mobile { display: none !important; }
-    .mobile-full { grid-template-columns: 1fr !important; }
-  }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-  .sync-dot.online { background: #22c55e; box-shadow: 0 0 6px #22c55e88; }
-  .sync-dot.offline { background: #ef4444; box-shadow: 0 0 6px #ef444488; }
-  .sync-dot.syncing { background: #f59e0b; animation: pulse 1s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
-  </style>
+    /* ===== Print Styles ===== */
+    #print-area { display: none; }
+    .print-preview-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000;
+      display: none; align-items: center; justify-content: center; overflow-y: auto; padding: 20px;
+    }
+    .print-preview-overlay.active { display: flex; }
+    .print-preview-box {
+      background: #fff; width: 100%; max-width: 1100px; border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4); position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .print-preview-header {
+      background: #1e3c72; color: #fff; padding: 16px 24px; border-radius: 12px 12px 0 0;
+      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;
+    }
+    .print-preview-body { padding: 30px; background: #fff; }
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+      .print-page {
+        padding: 20px 25px; width: 100%; position: relative;
+        break-inside: auto;
+      }
+      .page-break { page-break-before: always; break-before: page; display: block; height: 1px; }
+      .print-company-header {
+        text-align: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 12px;
+      }
+      .print-company-header h1 { font-size: 20px; font-weight: bold; margin: 0; }
+      .print-company-header p { font-size: 12px; margin: 2px 0; color: #333; }
+      .print-report-title {
+        text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 12px;
+        text-decoration: underline; padding: 8px; background: #f0f4f8; border-radius: 6px;
+      }
+      .print-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+      .print-table th, .print-table td {
+        border: 1px solid #000; padding: 4px 6px; font-size: 9px; color: #000; text-align: left;
+      }
+      .print-table th { background: #e8edf2; font-weight: 700; font-size: 9px; text-transform: uppercase; }
+      .print-table td { font-size: 9px; }
+      .print-total-row td { background: #e8edf2 !important; font-weight: 700; font-size: 10px; }
+      .print-grand-row td { background: #d4dbe4 !important; font-weight: 700; font-size: 10px; }
+      .print-signature-section { margin-top: 45px; break-inside: avoid; page-break-inside: avoid; }
+      .print-signature-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-top: 8px;
+      }
+      .print-sig-box { height: 55px; border-bottom: 1px dashed #000; margin-bottom: 6px; }
+      .print-sig-label { font-size: 11px; font-weight: 700; color: #000; }
+    }
+    </style>
  </head>
  <body class="h-full" style="background:var(--c-bg);color:var(--c-text);">
   <div id="app" class="h-full flex flex-col overflow-auto" style="width:100%;">
@@ -88,7 +130,7 @@
      <div>
       <h1 id="header-title" class="text-lg font-bold" style="line-height:1.2;">MCD SUBCONTRACT TRACKER</h1>
       <p id="header-company" class="text-xs" style="color:#94a3b8;">GMS COMPOSITE KNITTING IND LTD</p>
-     </div>
+    </div>
     </div>
     <div class="flex items-center gap-2">
      <span id="sync-indicator" class="flex items-center text-xs" style="color:#94a3b8;">
@@ -180,14 +222,18 @@
     <div id="page-entry" class="hidden">
      <div class="card">
       <h3 class="font-semibold mb-4 flex items-center gap-2"><i data-lucide="file-plus" style="width:18px;height:18px;color:var(--c-primary);"></i> New Loading/Unloading Entry</h3>
+      <div class="p-3 mb-4 rounded-lg text-xs" style="background:#3b82f622;color:#93c5fd;border:1px solid #3b82f644;">
+        <i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>
+        Vehicle Number, Challan, From & To fields have auto-suggestions from previous entries. Start typing to see matches.
+      </div>
       <form id="entry-form" onsubmit="handleSubmit(event)">
        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Date *</label><input type="date" id="f-date" required></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Serial No (Auto)</label><input type="text" id="f-serial" readonly style="opacity:.6;"></div>
-        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle Number *</label><input type="text" id="f-vehicle" required placeholder="e.g. Delhi Metro H 12-3456"></div>
-        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan Number *</label><input type="text" id="f-challan" required placeholder="Challan No"></div>
-        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle From *</label><input type="text" id="f-from" required placeholder="Origin location"></div>
-        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle To *</label><input type="text" id="f-to" required placeholder="Destination"></div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle Number *</label><input type="text" id="f-vehicle" list="dl-vehicle" required placeholder="e.g. Delhi Metro H 12-3456"><datalist id="dl-vehicle"></datalist></div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan Number *</label><input type="text" id="f-challan" list="dl-challan" required placeholder="Challan No"><datalist id="dl-challan"></datalist></div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle From *</label><input type="text" id="f-from" list="dl-from" required placeholder="Origin location"><datalist id="dl-from"></datalist></div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle To *</label><input type="text" id="f-to" list="dl-to" required placeholder="Destination"><datalist id="dl-to"></datalist></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department Name *</label>
          <select id="f-loader" required>
           <option value="">Select Department...</option>
@@ -209,7 +255,7 @@
         <div id="delivery-field" class="hidden"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Delivery Qty (KG - Scale Weight)</label><input type="number" step="0.01" id="f-deliveryqty" placeholder="0.00"></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Rate Per Ton (&#x09F3;) *</label><input type="number" step="0.01" id="f-rate" required placeholder="0.00" oninput="calcTotal()"></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Total Amount (&#x09F3;)</label><input type="text" id="f-total" readonly style="font-weight:700;color:#4ade80 !important;"></div>
-        <div class="md:col-span-2"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Remarks</label><input type="text" id="f-remarks" placeholder="Optional notes"></div>
+        <div class="md:col-span-2"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Remarks</label><input type="text" id="f-remarks" list="dl-remarks" placeholder="Optional notes"><datalist id="dl-remarks"></datalist></div>
        </div>
        <div id="duplicate-warning" class="hidden mt-3 p-3 rounded-lg text-sm font-semibold" style="background:#f59e0b22;color:#fbbf24;">&#9888;&#65039; Warning: This vehicle/challan may already have an entry today.</div>
        <div class="flex gap-3 mt-5">
@@ -227,11 +273,12 @@
       <div class="flex flex-wrap items-center gap-3 mb-4">
        <h3 class="font-semibold flex items-center gap-2"><i data-lucide="database" style="width:18px;height:18px;color:var(--c-primary);"></i> All Records</h3>
        <div class="flex-1"></div>
-       <input type="text" id="search-records" placeholder="Search vehicle, loader, challan..." oninput="renderRecords()" style="max-width:260px;">
-       <select id="filter-worktype" onchange="renderRecords()" style="max-width:150px;"><option value="">All Types</option><option value="Loading">Loading</option><option value="Unloading">Unloading</option><option value="Both">Both</option></select>
-       <input type="date" id="filter-date" onchange="renderRecords()" style="max-width:170px;">
+       <input type="text" id="search-records" placeholder="Search vehicle, loader, challan..." style="max-width:260px;">
+       <select id="filter-worktype" style="max-width:150px;"><option value="">All Types</option><option value="Loading">Loading</option><option value="Unloading">Unloading</option><option value="Both">Both</option></select>
+       <input type="date" id="filter-date" style="max-width:170px;">
+       <button onclick="renderRecords()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
       </div>
-      <div id="records-table" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;">No records yet.</p></div>
+      <div id="records-table" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;"><i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Apply filters above and click <b>SHOW</b> to load records.</p></div>
      </div>
     </div>
 
@@ -241,10 +288,11 @@
       <div class="flex flex-wrap items-center gap-3 mb-4">
        <h3 class="font-semibold flex items-center gap-2"><i data-lucide="wallet" style="width:18px;height:18px;color:var(--c-primary);"></i> Payment Management</h3>
        <div class="flex-1"></div>
-       <select id="payment-filter" onchange="renderPayments()" style="max-width:160px;"><option value="">All Status</option><option value="Unpaid">Unpaid</option><option value="Paid">Paid</option></select>
-       <input type="text" id="payment-search" placeholder="Search loader..." oninput="renderPayments()" style="max-width:200px;">
+       <select id="payment-filter" style="max-width:160px;"><option value="">All Status</option><option value="Unpaid">Unpaid</option><option value="Paid">Paid</option></select>
+       <input type="text" id="payment-search" placeholder="Search loader..." style="max-width:200px;">
+       <button onclick="renderPayments()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
       </div>
-      <div id="payments-table" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;">No records yet.</p></div>
+      <div id="payments-table" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;"><i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Apply filters above and click <b>SHOW</b> to load payments.</p></div>
      </div>
     </div>
 
@@ -253,17 +301,23 @@
      <div class="card mb-4">
       <h3 class="font-semibold mb-4 flex items-center gap-2"><i data-lucide="bar-chart-3" style="width:18px;height:18px;color:var(--c-primary);"></i> Reports</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
-       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From Date</label><input type="date" id="report-from" onchange="generateReport()"></div>
-       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To Date</label><input type="date" id="report-to" onchange="generateReport()"></div>
+       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From Date</label><input type="date" id="report-from"></div>
+       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To Date</label><input type="date" id="report-to"></div>
        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label>
-        <select id="report-dept" onchange="generateReport()"><option value="">All Departments</option><option value="Yarn MCD">Yarn MCD</option><option value="Grey Fabric MCD">Grey Fabric MCD</option><option value="Chemical MCD">Chemical MCD</option></select>
+        <select id="report-dept"><option value="">All Departments</option><option value="Yarn MCD">Yarn MCD</option><option value="Grey Fabric MCD">Grey Fabric MCD</option><option value="Chemical MCD">Chemical MCD</option></select>
        </div>
        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Payment Status</label>
-        <select id="report-status" onchange="generateReport()"><option value="">All Status</option><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select>
+        <select id="report-status"><option value="">All Status</option><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select>
        </div>
-       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Action</label><button onclick="exportToExcel()" id="export-btn" class="btn-secondary flex items-center gap-2" style="width:100%;"><i data-lucide="download" style="width:16px;height:16px;"></i> Export CSV</button></div>
+       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Actions</label>
+        <div class="flex gap-2">
+         <button onclick="generateReport()" class="btn-primary flex items-center gap-2" style="width:100%;padding:8px 12px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
+         <button onclick="printReport()" id="print-btn" class="btn-print flex items-center gap-2 hidden" style="width:100%;"><i data-lucide="printer" style="width:16px;height:16px;"></i> Print</button>
+         <button onclick="exportToExcel()" id="export-btn" class="btn-secondary flex items-center gap-2 hidden" style="width:100%;"><i data-lucide="download" style="width:16px;height:16px;"></i> CSV</button>
+        </div>
+       </div>
       </div>
-      <div id="report-output" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;">Select date range and filters to generate report.</p></div>
+      <div id="report-output" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;"><i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Apply filters above and click <b>SHOW</b> to generate report.</p></div>
      </div>
     </div>
 
@@ -302,6 +356,23 @@
       <button id="confirm-yes" class="btn-primary" style="background:#ef4444;">Yes, Delete</button>
       <button onclick="closeConfirm()" class="btn-secondary">Cancel</button>
      </div>
+    </div>
+   </div>
+
+   <!-- Print Area (Hidden) -->
+   <div id="print-area"></div>
+
+   <!-- Print Preview Overlay -->
+   <div id="print-preview-overlay" class="print-preview-overlay">
+    <div class="print-preview-box">
+     <div class="print-preview-header">
+      <h2 style="margin:0;font-size:18px;"><i data-lucide="printer" style="width:18px;height:18px;display:inline;vertical-align:middle;margin-right:8px;"></i>Print Preview</h2>
+      <div class="flex gap-2">
+       <button onclick="confirmPrint()" class="btn-print" style="padding:8px 20px;"><i data-lucide="printer" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:6px;"></i> Print Now</button>
+       <button onclick="closePrintPreview()" style="background:rgba(255,255,255,0.2);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;"><i data-lucide="x" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i> Close</button>
+      </div>
+     </div>
+     <div class="print-preview-body" id="print-preview-body"></div>
     </div>
    </div>
 
@@ -487,13 +558,58 @@ async function loadAllData() {
 
 function refreshUI() {
   updateDashboard();
-  renderRecords();
-  renderPayments();
-  generateReport();
+  populateFormDropdowns();
   var countEl = document.getElementById('record-count');
   if (countEl) countEl.textContent = allData.length + ' records';
 }
 
+// =============================================
+//  DROPDOWN AUTOCOMPLETE SYSTEM
+// =============================================
+function populateFormDropdowns() {
+  var vehicles = uniqueSorted(allData, 'vehicle_number');
+  var challans = uniqueSorted(allData, 'challan_number');
+  var froms = uniqueSorted(allData, 'vehicle_from');
+  var tos = uniqueSorted(allData, 'vehicle_to');
+  var remarks = uniqueSorted(allData, 'remarks');
+
+  fillDatalist('dl-vehicle', vehicles);
+  fillDatalist('dl-challan', challans);
+  fillDatalist('dl-from', froms);
+  fillDatalist('dl-to', tos);
+  fillDatalist('dl-remarks', remarks);
+}
+
+function uniqueSorted(arr, key) {
+  var seen = {};
+  var result = [];
+  for (var i = 0; i < arr.length; i++) {
+    var val = (arr[i][key] || '').trim();
+    if (val && !seen[val]) {
+      seen[val] = true;
+      result.push(val);
+    }
+  }
+  return result.sort();
+}
+
+function fillDatalist(id, items) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    html += '<option value="' + escAttr(items[i]) + '">';
+  }
+  el.innerHTML = html;
+}
+
+function escAttr(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// =============================================
+//  FIREBASE INIT
+// =============================================
 (async function() {
   try {
     await loadAllData();
@@ -796,7 +912,16 @@ function renderRecords() {
   var wt = document.getElementById('filter-worktype').value;
   var dt = document.getElementById('filter-date').value;
   var filtered = allData.filter(function(r) {
-    if (search && !(r.vehicle_number||'').toLowerCase().indexOf(search) !== -1 && !(r.loader_name||'').toLowerCase().indexOf(search) !== -1 && !(r.challan_number||'').toLowerCase().indexOf(search) !== -1) return false;
+    if (search) {
+      var v = (r.vehicle_number||'').toLowerCase().indexOf(search) !== -1;
+      var l = (r.loader_name||'').toLowerCase().indexOf(search) !== -1;
+      var c = (r.challan_number||'').toLowerCase().indexOf(search) !== -1;
+      var s = (r.serial_no||'').toLowerCase().indexOf(search) !== -1;
+      var f = (r.vehicle_from||'').toLowerCase().indexOf(search) !== -1;
+      var t = (r.vehicle_to||'').toLowerCase().indexOf(search) !== -1;
+      var rm = (r.remarks||'').toLowerCase().indexOf(search) !== -1;
+      if (!v && !l && !c && !s && !f && !t && !rm) return false;
+    }
     if (wt && r.work_type !== wt) return false;
     if (dt && r.date !== dt) return false;
     return true;
@@ -876,6 +1001,7 @@ function generateReport() {
   var status = statusEl ? statusEl.value : '';
   var div = document.getElementById('report-output');
   var exportBtn = document.getElementById('export-btn');
+  var printBtn = document.getElementById('print-btn');
 
   reportData = allData.filter(function(r) {
     if (from && r.date < from) return false;
@@ -888,8 +1014,12 @@ function generateReport() {
   if (reportData.length === 0) {
     div.innerHTML = '<p class="text-sm" style="color:#94a3b8;">No records found with selected filters.</p>';
     if (exportBtn) exportBtn.classList.add('hidden');
+    if (printBtn) printBtn.classList.add('hidden');
     return;
   }
+
+  if (exportBtn) exportBtn.classList.remove('hidden');
+  if (printBtn) printBtn.classList.remove('hidden');
 
   var html = '<table><thead><tr><th>Date</th><th>Serial</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Dept</th><th>Type</th><th>Weight</th><th>Receive</th><th>Delivery</th><th>Rate</th><th>Amount</th><th>Status</th><th>Pay Date</th><th>Remarks</th></tr></thead><tbody>';
   var totalAmount = 0, totalTons = 0, totalPaid = 0, totalUnpaid = 0;
@@ -908,7 +1038,6 @@ function generateReport() {
   html += '<tr style="background:var(--c-secondary);font-weight:700;"><td colspan="12"></td><td style="color:#4ade80;">&#x09F3;' + totalAmount.toLocaleString() + '</td><td colspan="3">Paid: &#x09F3;' + totalPaid.toLocaleString() + ' | Due: &#x09F3;' + totalUnpaid.toLocaleString() + '</td></tr>';
   html += '</tbody></table>';
   div.innerHTML = html;
-  if (exportBtn) exportBtn.classList.remove('hidden');
   lucide.createIcons();
 }
 
@@ -931,6 +1060,107 @@ function exportToExcel() {
   link.download = 'Loader_Report_' + new Date().toISOString().split('T')[0] + '.csv';
   link.click();
   showToast('Exported to CSV!', '#22c55e');
+}
+
+// =============================================
+//  PRINT REPORT (PDF Format Matching)
+// =============================================
+function getMonthName(monthStr) {
+  if (!monthStr) return '';
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var parts = monthStr.split('-');
+  return months[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+}
+
+function printReport() {
+  if (reportData.length === 0) { showToast('No report data to print! Apply filters first.', '#f59e0b'); return; }
+
+  var from = document.getElementById('report-from').value;
+  var to = document.getElementById('report-to').value;
+  var dept = document.getElementById('report-dept').value;
+  var deptLabel = dept || 'ALL DEPARTMENTS';
+
+  // Determine month/year from date range
+  var monthLabel = '';
+  if (from) {
+    monthLabel = getMonthName(from.substring(0, 7));
+  }
+
+  var totalWeight = 0, totalReceive = 0, totalDelivery = 0;
+  for (var i = 0; i < reportData.length; i++) {
+    totalWeight += reportData[i].net_weight_kg || 0;
+    totalReceive += reportData[i].receive_qty_kg || 0;
+    totalDelivery += reportData[i].delivery_qty_kg || 0;
+  }
+
+  var rowsHtml = '';
+  for (var j = 0; j < reportData.length; j++) {
+    var r = reportData[j];
+    rowsHtml += '<tr>';
+    rowsHtml += '<td>' + r.date + '</td>';
+    rowsHtml += '<td>' + esc(r.serial_no) + '</td>';
+    rowsHtml += '<td>' + esc(r.vehicle_number) + '</td>';
+    rowsHtml += '<td>' + esc(r.challan_number) + '</td>';
+    rowsHtml += '<td>' + esc(r.vehicle_from) + '</td>';
+    rowsHtml += '<td>' + esc(r.vehicle_to) + '</td>';
+    rowsHtml += '<td>' + esc(r.loader_name) + '</td>';
+    rowsHtml += '<td>' + esc(r.work_type) + '</td>';
+    rowsHtml += '<td>' + (r.net_weight_kg || 0).toLocaleString() + '</td>';
+    rowsHtml += '<td>' + (r.receive_qty_kg || 0).toLocaleString() + '</td>';
+    rowsHtml += '<td>' + (r.delivery_qty_kg || 0).toLocaleString() + '</td>';
+    rowsHtml += '<td>' + esc(r.remarks || '') + '</td>';
+    rowsHtml += '</tr>';
+  }
+
+  var pageHtml = '<div class="print-page">';
+  pageHtml += '<div class="print-company-header">';
+  pageHtml += '<h1>GMS COMPOSITE KNITTING IND. LTD.</h1>';
+  pageHtml += '<p>Sardagonj, Kashimpur, Gazipur</p>';
+  pageHtml += '</div>';
+  pageHtml += '<div class="print-report-title">Contract Loader Transaction Details - ' + monthLabel + ' (' + deptLabel + ')</div>';
+  pageHtml += '<table class="print-table">';
+  pageHtml += '<thead><tr><th>Date</th><th>Serial</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Department</th><th>Type</th><th>Weight(KG)</th><th>Receive(KG)</th><th>Delivery(KG)</th><th>Remarks</th></tr></thead>';
+  pageHtml += '<tbody>';
+  pageHtml += rowsHtml;
+  pageHtml += '</tbody>';
+  pageHtml += '<tfoot>';
+  pageHtml += '<tr class="print-grand-row"><td colspan="8" style="text-align:right;">Grand Total</td>';
+  pageHtml += '<td>' + totalWeight.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td>';
+  pageHtml += '<td>' + totalReceive.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td>';
+  pageHtml += '<td>' + totalDelivery.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td>';
+  pageHtml += '<td></td></tr>';
+  pageHtml += '<tr class="print-total-row"><td colspan="8" style="text-align:right;">GRAND TOTAL TRANSACTION (KG)</td>';
+  pageHtml += '<td colspan="4" style="text-align:center;font-size:11px;">' + totalWeight.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td>';
+  pageHtml += '<td></td></tr>';
+  pageHtml += '</tfoot>';
+  pageHtml += '</table>';
+  pageHtml += '<div class="print-signature-section">';
+  pageHtml += '<div class="print-signature-grid">';
+  pageHtml += '<div><div class="print-sig-box"></div><div class="print-sig-label">Authorized By MCD</div></div>';
+  pageHtml += '<div><div class="print-sig-box"></div><div class="print-sig-label">Prepared By</div></div>';
+  pageHtml += '<div><div class="print-sig-box"></div><div class="print-sig-label">Receive By</div></div>';
+  pageHtml += '<div><div class="print-sig-box"></div><div class="print-sig-label">Check By MCD</div></div>';
+  pageHtml += '</div>';
+  pageHtml += '</div>';
+  pageHtml += '</div>';
+
+  document.getElementById('print-area').innerHTML = pageHtml;
+  showPrintPreview();
+}
+
+function showPrintPreview() {
+  document.getElementById('print-preview-body').innerHTML = document.getElementById('print-area').innerHTML;
+  document.getElementById('print-preview-overlay').classList.add('active');
+  lucide.createIcons();
+}
+
+function closePrintPreview() {
+  document.getElementById('print-preview-overlay').classList.remove('active');
+}
+
+function confirmPrint() {
+  closePrintPreview();
+  setTimeout(function() { window.print(); }, 300);
 }
 
 // =============================================
@@ -1067,8 +1297,4 @@ function showToast(msg, color) {
 lucide.createIcons();
   </script>
  </body>
-</html>
-    
-  </body>
-  
 </html>
