@@ -70,6 +70,28 @@
     .sync-dot.offline { background: #ef4444; box-shadow: 0 0 6px #ef444488; }
     .sync-dot.syncing { background: #f59e0b; animation: pulse 1s infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+    .sticky-filter-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--c-surface);
+      padding: 12px 0 16px 0;
+      border-bottom: 2px solid #334155;
+      margin-bottom: 12px;
+    }
+    .data-table-wrap {
+      max-height: 68vh;
+      overflow: auto;
+      border: 1px solid #334155;
+      border-radius: 8px;
+    }
+    .data-table-wrap thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--c-surface);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
 
     /* ===== Print Styles ===== */
     #print-area { display: none; }
@@ -269,8 +291,11 @@
          <select id="f-loader" required>
           <option value="">Select Department...</option>
           <option value="Yarn MCD">Yarn MCD</option>
+          <option value="Yarn Dyeing MCD">Yarn Dyeing MCD</option>
           <option value="Grey Fabric MCD">Grey Fabric MCD</option>
+          <option value="Finish Fabric MCD">Finish Fabric MCD</option>
           <option value="Chemical MCD">Chemical MCD</option>
+          <option value="Commercial Shipment">Commercial Shipment</option>
          </select>
         </div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Work Type *</label>
@@ -301,13 +326,15 @@
     <!-- RECORDS -->
     <div id="page-records" class="hidden">
      <div class="card mb-4">
-      <div class="flex flex-wrap items-center gap-3 mb-4">
-       <h3 class="font-semibold flex items-center gap-2"><i data-lucide="database" style="width:18px;height:18px;color:var(--c-primary);"></i> All Records</h3>
-       <div class="flex-1"></div>
-       <input type="text" id="search-records" placeholder="Search vehicle, loader, challan..." style="max-width:260px;">
-       <select id="filter-worktype" style="max-width:150px;"><option value="">All Types</option><option value="Loading">Loading</option><option value="Unloading">Unloading</option><option value="Both">Both</option></select>
-       <input type="date" id="filter-date" style="max-width:170px;">
-       <button onclick="renderRecords()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
+      <div class="sticky-filter-bar">
+       <div class="flex flex-wrap items-center gap-3">
+        <h3 class="font-semibold flex items-center gap-2"><i data-lucide="database" style="width:18px;height:18px;color:var(--c-primary);"></i> All Records</h3>
+        <div class="flex-1"></div>
+        <input type="text" id="search-records" placeholder="Search vehicle, loader, challan..." style="max-width:260px;">
+        <select id="filter-worktype" style="max-width:150px;"><option value="">All Types</option><option value="Loading">Loading</option><option value="Unloading">Unloading</option><option value="Both">Both</option></select>
+        <input type="date" id="filter-date" style="max-width:170px;">
+        <button onclick="renderRecords()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
+       </div>
       </div>
       <div id="records-table" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;"><i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Apply filters above and click <b>SHOW</b> to load records.</p></div>
      </div>
@@ -330,23 +357,25 @@
     <!-- REPORTS -->
     <div id="page-reports" class="hidden">
      <div class="card mb-4">
-      <h3 class="font-semibold mb-4 flex items-center gap-2"><i data-lucide="bar-chart-3" style="width:18px;height:18px;color:var(--c-primary);"></i> Reports</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 mb-4">
-       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From Date</label><input type="date" id="report-from"></div>
-       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To Date</label><input type="date" id="report-to"></div>
-       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label>
-        <select id="report-dept"><option value="">All Departments</option><option value="Yarn MCD">Yarn MCD</option><option value="Grey Fabric MCD">Grey Fabric MCD</option><option value="Chemical MCD">Chemical MCD</option></select>
+      <div class="sticky-filter-bar">
+       <h3 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="bar-chart-3" style="width:18px;height:18px;color:var(--c-primary);"></i> Reports</h3>
+       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 mb-3">
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From Date</label><input type="date" id="report-from"></div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To Date</label><input type="date" id="report-to"></div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label>
+         <select id="report-dept"><option value="">All Departments</option><option value="Yarn MCD">Yarn MCD</option><option value="Yarn Dyeing MCD">Yarn Dyeing MCD</option><option value="Grey Fabric MCD">Grey Fabric MCD</option><option value="Finish Fabric MCD">Finish Fabric MCD</option><option value="Chemical MCD">Chemical MCD</option><option value="Commercial Shipment">Commercial Shipment</option></select>
+        </div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Payment Status</label>
+         <select id="report-status"><option value="">All Status</option><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select>
+        </div>
        </div>
-       <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Payment Status</label>
-        <select id="report-status"><option value="">All Status</option><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select>
+       <div class="flex flex-wrap gap-2">
+        <button onclick="generateReport()" class="btn-primary flex items-center gap-2" style="padding:9px 18px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
+        <button onclick="exportSummaryExcel()" id="summary-btn" class="btn-summary flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="file-spreadsheet" style="width:16px;height:16px;"></i> Summary Excel</button>
+        <button onclick="printReport()" id="print-btn" class="btn-print flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="printer" style="width:16px;height:16px;"></i> Print</button>
+        <button onclick="exportToExcel()" id="export-btn" class="btn-secondary flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="download" style="width:16px;height:16px;"></i> CSV</button>
+        <button onclick="shareReport()" id="share-btn" class="btn-share flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="share-2" style="width:16px;height:16px;"></i> Share</button>
        </div>
-      </div>
-      <div class="flex flex-wrap gap-2 mb-4">
-       <button onclick="generateReport()" class="btn-primary flex items-center gap-2" style="padding:9px 18px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
-       <button onclick="exportSummaryExcel()" id="summary-btn" class="btn-summary flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="file-spreadsheet" style="width:16px;height:16px;"></i> Summary Excel</button>
-       <button onclick="printReport()" id="print-btn" class="btn-print flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="printer" style="width:16px;height:16px;"></i> Print</button>
-       <button onclick="exportToExcel()" id="export-btn" class="btn-secondary flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="download" style="width:16px;height:16px;"></i> CSV</button>
-       <button onclick="shareReport()" id="share-btn" class="btn-share flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="share-2" style="width:16px;height:16px;"></i> Share</button>
       </div>
       <div id="report-output" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;"><i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Apply filters above and click <b>SHOW</b> to generate report.</p></div>
      </div>
@@ -997,7 +1026,7 @@ function renderRecords() {
     html += '<tr><td style="white-space:nowrap;">' + r.date + '</td><td>' + esc(r.serial_no) + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td style="white-space:nowrap;">' + esc(r.vehicle_from) + ' -> ' + esc(r.vehicle_to) + '</td><td>' + esc(r.loader_name) + '</td><td>' + r.work_type + '</td><td>' + r.net_weight_kg + 'KG</td><td>&#x09F3;' + r.rate_per_ton + '</td><td style="font-weight:600;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</td><td>' + badge + '</td><td style="white-space:nowrap;"><button onclick="editRecord(\'' + r.__backendId + '\')" class="btn-secondary" style="padding:4px 8px;font-size:12px;margin-right:4px;"><i data-lucide="edit-2" style="width:14px;height:14px;"></i></button><button onclick="confirmDelete(\'' + r.__backendId + '\')" class="btn-secondary" style="padding:4px 8px;font-size:12px;"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td></tr>';
   }
   html += '</tbody></table>';
-  div.innerHTML = html;
+  div.innerHTML = '<div class="data-table-wrap">' + html + '</div>';
   lucide.createIcons();
 }
 
@@ -1105,7 +1134,7 @@ function generateReport() {
   html += '<tr style="border-top:2px solid #334155;background:var(--c-secondary);font-weight:700;"><td colspan="8">TOTAL</td><td>' + totalTons.toFixed(1) + ' Tons</td><td colspan="7"></td></tr>';
   html += '<tr style="background:var(--c-secondary);font-weight:700;"><td colspan="12"></td><td style="color:#4ade80;">&#x09F3;' + totalAmount.toLocaleString() + '</td><td colspan="3">Paid: &#x09F3;' + totalPaid.toLocaleString() + ' | Due: &#x09F3;' + totalUnpaid.toLocaleString() + '</td></tr>';
   html += '</tbody></table>';
-  div.innerHTML = html;
+  div.innerHTML = '<div class="data-table-wrap">' + html + '</div>';
   lucide.createIcons();
 }
 
@@ -1249,7 +1278,7 @@ function editRecord(id) {
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan No</label><input type="text" id="edit-challan" value="' + esc(rec.challan_number) + '"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From</label><input type="text" id="edit-from" value="' + esc(rec.vehicle_from) + '"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To</label><input type="text" id="edit-to" value="' + esc(rec.vehicle_to) + '"></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label><select id="edit-loader"><option value="Yarn MCD"' + (rec.loader_name==='Yarn MCD'?' selected':'') + '>Yarn MCD</option><option value="Grey Fabric MCD"' + (rec.loader_name==='Grey Fabric MCD'?' selected':'') + '>Grey Fabric MCD</option><option value="Chemical MCD"' + (rec.loader_name==='Chemical MCD'?' selected':'') + '>Chemical MCD</option></select></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label><select id="edit-loader"><option value="Yarn MCD"' + (rec.loader_name==='Yarn MCD'?' selected':'') + '>Yarn MCD</option><option value="Yarn Dyeing MCD"' + (rec.loader_name==='Yarn Dyeing MCD'?' selected':'') + '>Yarn Dyeing MCD</option><option value="Grey Fabric MCD"' + (rec.loader_name==='Grey Fabric MCD'?' selected':'') + '>Grey Fabric MCD</option><option value="Finish Fabric MCD"' + (rec.loader_name==='Finish Fabric MCD'?' selected':'') + '>Finish Fabric MCD</option><option value="Chemical MCD"' + (rec.loader_name==='Chemical MCD'?' selected':'') + '>Chemical MCD</option><option value="Commercial Shipment"' + (rec.loader_name==='Commercial Shipment'?' selected':'') + '>Commercial Shipment</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Work Type</label><select id="edit-worktype" onchange="updateEditFields()"><option value="Loading"' + (rec.work_type==='Loading'?' selected':'') + '>Loading</option><option value="Unloading"' + (rec.work_type==='Unloading'?' selected':'') + '>Unloading</option><option value="Both"' + (rec.work_type==='Both'?' selected':'') + '>Both</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Net Weight (KG)</label><input type="number" step="0.01" id="edit-netweight" value="' + rec.net_weight_kg + '"></div>';
   html += '<div id="edit-receive-field"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Receive Qty (KG)</label><input type="number" step="0.01" id="edit-receiveqty" value="' + (rec.receive_qty_kg||0) + '"></div>';
