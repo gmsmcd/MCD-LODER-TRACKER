@@ -1854,12 +1854,14 @@ function updateDashboard() {
   }
   summaryDiv.innerHTML = summaryHtml;
 
-  // Trend chart (last 30 days)
-  var trendLabels = [], trendData = [];
+  // Trend chart (last 30 days) — Company-wise comparison
+  var trendLabels = [], trendComp = [], trendText = [];
   for (var t = 29; t >= 0; t--) {
     var tDate = new Date(Date.now() - t * 86400000).toISOString().split('T')[0];
     trendLabels.push(tDate.substring(5));
-    trendData.push(allData.filter(function(r) { return r.date === tDate; }).length);
+    var dayRecs = allData.filter(function(r) { return r.date === tDate; });
+    trendComp.push(dayRecs.filter(function(r) { return r.company_name === 'GMS COMPOSITE KNITTING IND LTD'; }).length);
+    trendText.push(dayRecs.filter(function(r) { return r.company_name === 'GMS TEXTILES LTD'; }).length);
   }
 
   if (trendChart) trendChart.destroy();
@@ -1867,8 +1869,14 @@ function updateDashboard() {
   if (ctx) {
     trendChart = new Chart(ctx, {
       type: 'line',
-      data: { labels: trendLabels, datasets: [{ label: 'Transactions', data: trendData, borderColor: '#3b82f6', backgroundColor: '#3b82f622', fill: true, tension: 0.3, pointRadius: 2 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#334155' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' }, beginAtZero: true } } }
+      data: {
+        labels: trendLabels,
+        datasets: [
+          { label: 'GMS Composite', data: trendComp, borderColor: '#3b82f6', backgroundColor: '#3b82f622', fill: true, tension: 0.35, pointRadius: 3, pointBackgroundColor: '#3b82f6', borderWidth: 2.5 },
+          { label: 'GMS Textiles', data: trendText, borderColor: '#f59e0b', backgroundColor: '#f59e0b22', fill: true, tension: 0.35, pointRadius: 3, pointBackgroundColor: '#f59e0b', borderWidth: 2.5 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#94a3b8', usePointStyle: true, pointStyle: 'circle', padding: 18, font: { size: 12, weight: '600' } } } }, scales: { x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#33415544' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: '#33415544' }, beginAtZero: true } } }
     });
   }
 
@@ -1948,12 +1956,13 @@ function generateDeptSummary() {
   var company = document.getElementById('ds-company').value;
   var combine = document.getElementById('ds-combine').checked;
   var isAllDept = (dept === '__ALL__');
+  var isAllCompany = !company;
 
   // Date-filtered base data
   var dateFiltered = allData.slice();
   if (fromDate) dateFiltered = dateFiltered.filter(function(r) { return r.date >= fromDate; });
   if (toDate) dateFiltered = dateFiltered.filter(function(r) { return r.date <= toDate; });
-  if (company) dateFiltered = dateFiltered.filter(function(r) { return r.company_name === company; });
+  if (!isAllCompany) dateFiltered = dateFiltered.filter(function(r) { return r.company_name === company; });
 
   // Filter by department (or all)
   var filtered = isAllDept ? dateFiltered : dateFiltered.filter(function(r) { return r.loader_name === dept; });
@@ -1993,6 +2002,38 @@ function generateDeptSummary() {
     deptBreakdown.push({ name: dName, scaleWeight: dScale, amount: dAmount, count: dRecs.length });
   }
 
+  // Build per-company breakdown when all companies selected
+  var companyBreakdown = [];
+  if (isAllCompany) {
+    var companies = ['GMS COMPOSITE KNITTING IND LTD', 'GMS TEXTILES LTD'];
+    for (var ci = 0; ci < companies.length; ci++) {
+      var cName = companies[ci];
+      var cRecs = dateFiltered.filter(function(r) { return r.company_name === cName; });
+      if (cRecs.length === 0) continue;
+      var cLoading = cRecs.filter(function(r) { return r.work_type === 'Loading'; });
+      var cUnloading = cRecs.filter(function(r) { return r.work_type === 'Unloading'; });
+      var cLoadW = cLoading.reduce(function(s, r) { return s + (r.net_weight_kg || 0); }, 0);
+      var cUnloadW = cUnloading.reduce(function(s, r) { return s + (r.net_weight_kg || 0); }, 0);
+      var cReceive = cUnloading.reduce(function(s, r) { return s + (r.receive_qty_kg || 0); }, 0);
+      var cDelivery = cLoading.reduce(function(s, r) { return s + (r.delivery_qty_kg || 0); }, 0);
+      var cScale = cReceive + cDelivery;
+      var cAmount = cRecs.reduce(function(s, r) { return s + (r.total_amount || 0); }, 0);
+      // Per-department breakdown for this company
+      var cDeptBreakdown = [];
+      for (var cdi = 0; cdi < allDepts.length; cdi++) {
+        var cdName = allDepts[cdi];
+        var cdRecs = cRecs.filter(function(r) { return r.loader_name === cdName; });
+        if (cdRecs.length === 0) continue;
+        var cdLoading = cdRecs.filter(function(r) { return r.work_type === 'Loading'; });
+        var cdUnloading = cdRecs.filter(function(r) { return r.work_type === 'Unloading'; });
+        var cdScale = cdLoading.reduce(function(s, r) { return s + (r.delivery_qty_kg || 0); }, 0) + cdUnloading.reduce(function(s, r) { return s + (r.receive_qty_kg || 0); }, 0);
+        var cdAmount = cdRecs.reduce(function(s, r) { return s + (r.total_amount || 0); }, 0);
+        cDeptBreakdown.push({ name: cdName, scaleWeight: cdScale, amount: cdAmount, count: cdRecs.length });
+      }
+      companyBreakdown.push({ name: cName, totalCount: cRecs.length, loadingWeight: cLoadW, unloadingWeight: cUnloadW, receiveQty: cReceive, deliveryQty: cDelivery, scaleWeight: cScale, amount: cAmount, loadingCount: cLoading.length, unloadingCount: cUnloading.length, deptBreakdown: cDeptBreakdown });
+    }
+  }
+
   deptSummaryData = {
     dept: dept, deptLabel: isAllDept ? 'All Department' : dept, fromDate: fromDate, toDate: toDate, combine: combine,
     totalLoadingWeight: totalLoadingWeight,
@@ -2005,7 +2046,9 @@ function generateDeptSummary() {
     unloadingCount: unloadingRecs.length,
     totalCount: filtered.length,
     isAllDept: isAllDept,
+    isAllCompany: isAllCompany,
     deptBreakdown: deptBreakdown,
+    companyBreakdown: companyBreakdown,
     grandScaleWeight: grandScaleWeight,
     grandAmount: grandAmount
   };
@@ -2054,6 +2097,66 @@ function renderDeptSummaryUI(data) {
   }
 
   var html = '';
+
+  // ===== ALL COMPANIES: Side-by-side comparison =====
+  if (data.isAllCompany && data.companyBreakdown.length > 1) {
+    html += '<div class="card mb-4" style="background:linear-gradient(135deg, #1e293b, #0f172a);border:1px solid #334155;">';
+    html += '<h3 class="font-bold mb-4 flex items-center gap-2" style="font-size:16px;color:#e2e8f0;"><i data-lucide="building-2" style="width:20px;height:20px;color:#8b5cf6;"></i> Company-wise Comparison — ' + dateRange + '</h3>';
+    html += '<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">';
+
+    for (var cbi = 0; cbi < data.companyBreakdown.length; cbi++) {
+      var cb = data.companyBreakdown[cbi];
+      var isComposite = cb.name === 'GMS COMPOSITE KNITTING IND LTD';
+      var compColor = isComposite ? '#3b82f6' : '#f59e0b';
+      var compBg = isComposite ? 'linear-gradient(135deg, #1e3a5f, #1e293b)' : 'linear-gradient(135deg, #3d2e0a, #1e293b)';
+      var compBorder = isComposite ? '#3b82f6' : '#f59e0b';
+      var compLabel = isComposite ? 'GMS Composite Knitting' : 'GMS Textiles';
+
+      html += '<div class="card" style="background:' + compBg + ';border:2px solid ' + compBorder + ';border-radius:14px;">';
+      // Company header
+      html += '<div style="background:' + compBorder + ';margin:-20px -20px 16px -20px;padding:12px 20px;border-radius:12px 12px 0 0;">';
+      html += '<h4 class="font-bold" style="color:#fff;font-size:15px;margin:0;">' + compLabel + '</h4>';
+      html += '<p style="color:#ffffffcc;font-size:11px;margin:2px 0 0 0;">' + cb.totalCount + ' total entries</p>';
+      html += '</div>';
+      // Stat cards
+      html += '<div class="grid grid-cols-3 gap-2 mb-3">';
+      html += '<div style="text-align:center;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;"><div class="text-lg font-bold" style="color:' + compColor + ';">' + cb.loadingCount + '</div><div class="text-xs" style="color:#94a3b8;">Loading</div></div>';
+      html += '<div style="text-align:center;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;"><div class="text-lg font-bold" style="color:#10b981;">' + cb.unloadingCount + '</div><div class="text-xs" style="color:#94a3b8;">Unloading</div></div>';
+      html += '<div style="text-align:center;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;"><div class="text-lg font-bold" style="color:#4ade80;">&#x09F3;' + cb.amount.toLocaleString('en-US', {maximumFractionDigits:0}) + '</div><div class="text-xs" style="color:#94a3b8;">Amount</div></div>';
+      html += '</div>';
+      // Department table for this company
+      if (cb.deptBreakdown.length > 0) {
+        html += '<div style="max-height:240px;overflow:auto;border:1px solid ' + compBorder + '44;border-radius:8px;">';
+        html += '<table><thead><tr><th style="position:sticky;top:0;z-index:2;background:rgba(0,0,0,0.3);">Department</th><th style="text-align:right;position:sticky;top:0;z-index:2;background:rgba(0,0,0,0.3);">Scale Wt (KG)</th><th style="text-align:right;position:sticky;top:0;z-index:2;background:rgba(0,0,0,0.3);">Amount (&#x09F3;)</th></tr></thead><tbody>';
+        for (var cdbi = 0; cdbi < cb.deptBreakdown.length; cdbi++) {
+          var cdb = cb.deptBreakdown[cdbi];
+          html += '<tr><td style="font-weight:600;font-size:12px;">' + esc(cdb.name) + '</td><td style="text-align:right;font-size:12px;">' + cdb.scaleWeight.toLocaleString('en-US', {maximumFractionDigits:0}) + '</td><td style="text-align:right;font-weight:600;font-size:12px;color:#4ade80;">&#x09F3;' + cdb.amount.toLocaleString('en-US', {maximumFractionDigits:0}) + '</td></tr>';
+        }
+        html += '<tr style="border-top:2px solid ' + compBorder + ';"><td style="font-weight:700;font-size:12px;color:' + compColor + ';">TOTAL</td><td style="text-align:right;font-weight:700;font-size:12px;color:' + compColor + ';">' + cb.scaleWeight.toLocaleString('en-US', {maximumFractionDigits:0}) + '</td><td style="text-align:right;font-weight:700;font-size:12px;color:#4ade80;">&#x09F3;' + cb.amount.toLocaleString('en-US', {maximumFractionDigits:0}) + '</td></tr>';
+        html += '</tbody></table></div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+    // Grand total comparison bar
+    var cb0 = data.companyBreakdown[0];
+    var cb1 = data.companyBreakdown.length > 1 ? data.companyBreakdown[1] : null;
+    var totalAllAmount = cb0.amount + (cb1 ? cb1.amount : 0);
+    var totalAllScale = cb0.scaleWeight + (cb1 ? cb1.scaleWeight : 0);
+    var pct0 = totalAllAmount > 0 ? ((cb0.amount / totalAllAmount) * 100).toFixed(1) : 0;
+    var pct1 = totalAllAmount > 0 && cb1 ? ((cb1.amount / totalAllAmount) * 100).toFixed(1) : 0;
+    html += '<div style="margin-top:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">';
+    html += '<div class="flex items-center justify-between mb-2"><span class="text-sm font-semibold" style="color:#e2e8f0;">Combined Total: <span style="color:#4ade80;">&#x09F3;' + totalAllAmount.toLocaleString('en-US', {maximumFractionDigits:0}) + '</span></span><span class="text-xs" style="color:#94a3b8;">Total Scale: ' + totalAllScale.toLocaleString('en-US', {maximumFractionDigits:0}) + ' KG</span></div>';
+    html += '<div style="display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px;">';
+    html += '<div style="flex:0 0 ' + pct0 + '%;background:#3b82f6;border-radius:4px;" title="GMS Composite: ' + pct0 + '%"></div>';
+    if (cb1) html += '<div style="flex:0 0 ' + pct1 + '%;background:#f59e0b;border-radius:4px;" title="GMS Textiles: ' + pct1 + '%"></div>';
+    html += '</div>';
+    html += '<div class="flex gap-4 mt-2">';
+    html += '<span class="text-xs" style="color:#3b82f6;"><span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>GMS Composite: ' + pct0 + '%</span>';
+    if (cb1) html += '<span class="text-xs" style="color:#f59e0b;"><span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>GMS Textiles: ' + pct1 + '%</span>';
+    html += '</div></div>';
+    html += '</div>';
+  }
 
   // ===== TOP SECTION: Summary Table (LEFT) + Pie Chart (RIGHT) =====
   html += '<div class="card mb-4">';
