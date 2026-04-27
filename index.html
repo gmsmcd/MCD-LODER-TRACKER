@@ -3,17 +3,6 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>Subcontract Tracker</title>
-    
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GMS MCD SUB-CONTRACT LOAD TRACKER</title>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -305,6 +294,27 @@
        <p id="stat-total-count" class="text-3xl font-bold">0</p>
       </div>
      </div>
+     <div class="card mb-5" style="border-left:4px solid #8b5cf6;">
+      <h3 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="building-2" style="width:18px;height:18px;color:#8b5cf6;"></i> Company-wise Overview</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="stat-card" style="border-left:4px solid #3b82f6;">
+          <div class="text-sm font-semibold mb-2" style="color:#3b82f6;">GMS COMPOSITE KNITTING</div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div><div class="text-xs" style="color:#94a3b8;">Entries</div><div id="stat-comp-count" class="text-xl font-bold">0</div></div>
+            <div><div class="text-xs" style="color:#94a3b8;">Weight (KG)</div><div id="stat-comp-weight" class="text-xl font-bold">0</div></div>
+            <div><div class="text-xs" style="color:#94a3b8;">Amount</div><div id="stat-comp-amount" class="text-xl font-bold" style="color:#4ade80;">&#x09F3;0</div></div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid #f59e0b;">
+          <div class="text-sm font-semibold mb-2" style="color:#f59e0b;">GMS TEXTILES</div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div><div class="text-xs" style="color:#94a3b8;">Entries</div><div id="stat-text-count" class="text-xl font-bold">0</div></div>
+            <div><div class="text-xs" style="color:#94a3b8;">Weight (KG)</div><div id="stat-text-weight" class="text-xl font-bold">0</div></div>
+            <div><div class="text-xs" style="color:#94a3b8;">Amount</div><div id="stat-text-amount" class="text-xl font-bold" style="color:#4ade80;">&#x09F3;0</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
      <div class="card mb-5">
       <h3 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="trending-up" style="width:18px;height:18px;color:var(--c-primary);"></i> Transaction Trend (Last 30 Days)</h3>
       <div style="width:100%;height:280px;overflow:hidden;"><canvas id="trend-chart"></canvas></div>
@@ -343,6 +353,13 @@
       </div>
       <form id="entry-form" onsubmit="handleSubmit(event)">
        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="md:col-span-2 lg:col-span-3"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Company *</label>
+          <select id="f-company" required style="font-size:16px;padding:12px;" onchange="autoSetRate()">
+            <option value="">Select Company...</option>
+            <option value="GMS COMPOSITE KNITTING IND LTD">GMS COMPOSITE KNITTING IND LTD</option>
+            <option value="GMS TEXTILES LTD">GMS TEXTILES LTD</option>
+          </select>
+        </div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Date *</label><input type="date" id="f-date" required></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Serial No (Auto)</label><input type="text" id="f-serial" readonly style="opacity:.6;"></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle Number *</label><input type="text" id="f-vehicle" list="dl-vehicle" required placeholder="e.g. Delhi Metro H 12-3456"><datalist id="dl-vehicle"></datalist></div>
@@ -394,6 +411,7 @@
         <input type="text" id="search-records" placeholder="Search vehicle, loader, challan..." style="max-width:260px;">
         <select id="filter-dept" style="max-width:170px;"><option value="">All Departments</option><option value="Yarn MCD">Yarn MCD</option><option value="Yarn Dyeing MCD">Yarn Dyeing MCD</option><option value="Grey Fabric MCD">Grey Fabric MCD</option><option value="Finish Fabric MCD">Finish Fabric MCD</option><option value="Chemical MCD">Chemical MCD</option><option value="Commercial Shipment">Commercial Shipment</option></select>
         <select id="filter-worktype" style="max-width:150px;"><option value="">All Types</option><option value="Loading">Loading</option><option value="Unloading">Unloading</option></select>
+        <select id="filter-company" style="max-width:180px;"><option value="">All Companies</option><option value="GMS COMPOSITE KNITTING IND LTD">GMS Composite</option><option value="GMS TEXTILES LTD">GMS Textiles</option></select>
         <input type="date" id="filter-date" style="max-width:170px;">
         <button onclick="renderRecords()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
        </div>
@@ -409,6 +427,7 @@
        <h3 class="font-semibold flex items-center gap-2"><i data-lucide="wallet" style="width:18px;height:18px;color:var(--c-primary);"></i> Payment Management</h3>
        <div class="flex-1"></div>
        <select id="payment-filter" style="max-width:160px;"><option value="">All Status</option><option value="Unpaid">Unpaid</option><option value="Paid">Paid</option></select>
+       <select id="payment-company-filter" style="max-width:180px;"><option value="">All Companies</option><option value="GMS COMPOSITE KNITTING IND LTD">GMS Composite</option><option value="GMS TEXTILES LTD">GMS Textiles</option></select>
        <input type="text" id="payment-search" placeholder="Search loader..." style="max-width:200px;">
        <button onclick="renderPayments()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
       </div>
@@ -421,7 +440,7 @@
      <div class="card mb-4">
       <div class="sticky-filter-bar">
        <h3 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="pie-chart" style="width:18px;height:18px;color:var(--c-primary);"></i> Department Summary Dashboard</h3>
-       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+       <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department *</label>
          <select id="ds-dept" required>
           <option value="">Select Department...</option>
@@ -433,6 +452,13 @@
           <option value="Chemical MCD">Chemical MCD</option>
           <option value="Commercial Shipment">Commercial Shipment</option>
          </select>
+        </div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Company</label>
+          <select id="ds-company">
+            <option value="">All Companies</option>
+            <option value="GMS COMPOSITE KNITTING IND LTD">GMS Composite</option>
+            <option value="GMS TEXTILES LTD">GMS Textiles</option>
+          </select>
         </div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From Date (Optional)</label><input type="date" id="ds-from"></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To Date (Optional)</label><input type="date" id="ds-to"></div>
@@ -465,6 +491,9 @@
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To Date</label><input type="date" id="report-to"></div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label>
          <select id="report-dept"><option value="">All Departments</option><option value="Yarn MCD">Yarn MCD</option><option value="Yarn Dyeing MCD">Yarn Dyeing MCD</option><option value="Grey Fabric MCD">Grey Fabric MCD</option><option value="Finish Fabric MCD">Finish Fabric MCD</option><option value="Chemical MCD">Chemical MCD</option><option value="Commercial Shipment">Commercial Shipment</option></select>
+        </div>
+        <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Company</label>
+         <select id="report-company"><option value="">All Companies</option><option value="GMS COMPOSITE KNITTING IND LTD">GMS Composite</option><option value="GMS TEXTILES LTD">GMS Textiles</option></select>
         </div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Payment Status</label>
          <select id="report-status"><option value="">All Status</option><option value="Paid">Paid</option><option value="Unpaid">Unpaid</option></select>
@@ -773,7 +802,7 @@ var syncToastTimeout = null;
 function computeDataHash() {
   // Include record count + IDs + key fields for reliable change detection (including edits)
   var parts = allData.map(function(r) {
-    return (r.__backendId || '') + ':' + (r.date || '') + ':' + (r.total_amount || 0) + ':' + (r.net_weight_kg || 0) + ':' + (r.receive_qty_kg || 0) + ':' + (r.delivery_qty_kg || 0) + ':' + (r.work_type || '');
+    return (r.__backendId || '') + ':' + (r.company_name || '') + ':' + (r.date || '') + ':' + (r.total_amount || 0) + ':' + (r.net_weight_kg || 0) + ':' + (r.receive_qty_kg || 0) + ':' + (r.delivery_qty_kg || 0) + ':' + (r.work_type || '');
   }).sort();
   return allData.length + '|' + parts.join('|');
 }
@@ -803,7 +832,7 @@ async function syncFromFirebase(showNotify) {
 
   // Compute content-aware hash for detecting edits too
   var newParts = newData.map(function(r) {
-    return (r.__backendId || '') + ':' + (r.date || '') + ':' + (r.total_amount || 0) + ':' + (r.net_weight_kg || 0) + ':' + (r.receive_qty_kg || 0) + ':' + (r.delivery_qty_kg || 0) + ':' + (r.work_type || '');
+    return (r.__backendId || '') + ':' + (r.company_name || '') + ':' + (r.date || '') + ':' + (r.total_amount || 0) + ':' + (r.net_weight_kg || 0) + ':' + (r.receive_qty_kg || 0) + ':' + (r.delivery_qty_kg || 0) + ':' + (r.work_type || '');
   }).sort();
   var newHash = newData.length + '|' + newParts.join('|');
 
@@ -896,9 +925,24 @@ function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot
 (async function() {
   try {
     await loadAllData();
+    // MIGRATION: Set company_name for old records that don't have it
+    var migrated = 0;
+    for (var mi = 0; mi < allData.length; mi++) {
+      if (!allData[mi].company_name) {
+        await fbPut(DB_PATH + '/' + allData[mi].__backendId + '/company_name', 'GMS COMPOSITE KNITTING IND LTD');
+        allData[mi].company_name = 'GMS COMPOSITE KNITTING IND LTD';
+        migrated++;
+      }
+    }
+    if (migrated > 0) {
+      refreshUI();
+      lastDataHash = computeDataHash();
+      showToast('Firebase connected! ' + migrated + ' old records updated to GMS COMPOSITE KNITTING', '#22c55e');
+    } else {
+      showToast('Firebase connected! Real-time sync ON', '#22c55e');
+    }
     dbReady = true;
     setSyncStatus('online');
-    showToast('Firebase connected! Real-time sync ON', '#22c55e');
     // Poll Firebase every 3 seconds for real-time sync
     syncPollingInterval = setInterval(async function() {
       if (!isSyncing && dbReady) {
@@ -991,26 +1035,30 @@ function toggleFields() {
 
 function autoSetRate() {
   var dept = document.getElementById('f-loader').value;
+  var company = document.getElementById('f-company').value;
   var rateField = document.getElementById('f-rate');
-  if (dept === 'Chemical MCD') {
+  if (!dept) { rateField.value = ''; calcTotal(); return; }
+  if (company === 'GMS TEXTILES LTD') {
+    rateField.value = 370;
+  } else if (dept === 'Chemical MCD') {
     rateField.value = 355;
-  } else if (dept) {
-    rateField.value = 360;
   } else {
-    rateField.value = '';
+    rateField.value = 360;
   }
   calcTotal();
 }
 
 function autoSetEditRate() {
   var dept = document.getElementById('edit-loader').value;
+  var company = document.getElementById('edit-company').value;
   var rateField = document.getElementById('edit-rate');
-  if (dept === 'Chemical MCD') {
+  if (!dept) { rateField.value = ''; return; }
+  if (company === 'GMS TEXTILES LTD') {
+    rateField.value = 370;
+  } else if (dept === 'Chemical MCD') {
     rateField.value = 355;
-  } else if (dept) {
-    rateField.value = 360;
   } else {
-    rateField.value = '';
+    rateField.value = 360;
   }
 }
 
@@ -1030,7 +1078,8 @@ function checkDuplicate() {
   var v = document.getElementById('f-vehicle').value.trim();
   var c = document.getElementById('f-challan').value.trim();
   var d = document.getElementById('f-date').value;
-  var dup = allData.some(function(r) { return r.date === d && (r.vehicle_number === v || r.challan_number === c) && v && c; });
+  var company = document.getElementById('f-company').value;
+  var dup = allData.some(function(r) { return r.date === d && r.company_name === company && (r.vehicle_number === v || r.challan_number === c) && v && c; });
   document.getElementById('duplicate-warning').classList.toggle('hidden', !dup);
 }
 
@@ -1073,6 +1122,7 @@ async function handleSubmit(e) {
 
     var record = {
       date: date,
+      company_name: document.getElementById('f-company').value,
       serial_no: serial,
       vehicle_number: vehicle,
       challan_number: challan,
@@ -1130,7 +1180,9 @@ function renderRecords() {
   var wt = document.getElementById('filter-worktype').value;
   var dept = document.getElementById('filter-dept').value;
   var dt = document.getElementById('filter-date').value;
+  var company = document.getElementById('filter-company').value;
   var filtered = allData.filter(function(r) {
+    if (company && r.company_name !== company) return false;
     if (search) {
       var v = (r.vehicle_number||'').toLowerCase().indexOf(search) !== -1;
       var l = (r.loader_name||'').toLowerCase().indexOf(search) !== -1;
@@ -1150,11 +1202,11 @@ function renderRecords() {
   var div = document.getElementById('records-table');
   if (filtered.length === 0) { div.innerHTML = '<p class="text-sm" style="color:#94a3b8;">No records found.</p>'; return; }
 
-  var html = '<table><thead><tr><th>Date</th><th>Serial</th><th>Vehicle</th><th>Challan</th><th>From-To</th><th>Dept</th><th>Type</th><th>Weight</th><th>Rate</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+  var html = '<table><thead><tr><th>Date</th><th>Company</th><th>Serial</th><th>Vehicle</th><th>Challan</th><th>From-To</th><th>Dept</th><th>Type</th><th>Weight</th><th>Rate</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>';
   for (var i = 0; i < filtered.length; i++) {
     var r = filtered[i];
     var badge = r.payment_status === 'Paid' ? '<span class="badge-paid">Paid</span>' : '<span class="badge-unpaid">Unpaid</span>';
-    html += '<tr><td style="white-space:nowrap;">' + r.date + '</td><td style="font-size:11px;">' + esc(r.serial_no) + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td style="white-space:nowrap;">' + esc(r.vehicle_from) + ' -> ' + esc(r.vehicle_to) + '</td><td style="font-size:12px;">' + esc(r.loader_name) + '</td><td>' + r.work_type + '</td><td>' + r.net_weight_kg + 'KG</td><td>&#x09F3;' + r.rate_per_ton + '</td><td style="font-weight:600;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</td><td>' + badge + '</td><td style="white-space:nowrap;"><button onclick="editRecord(\'' + r.__backendId + '\')" class="btn-secondary" style="padding:4px 8px;font-size:12px;margin-right:4px;"><i data-lucide="edit-2" style="width:14px;height:14px;"></i></button><button onclick="confirmDelete(\'' + r.__backendId + '\')" class="btn-secondary" style="padding:4px 8px;font-size:12px;"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td></tr>';
+    html += '<tr><td style="white-space:nowrap;">' + r.date + '</td><td style="font-size:11px;">' + esc(r.company_name || '-') + '</td><td style="font-size:11px;">' + esc(r.serial_no) + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td style="white-space:nowrap;">' + esc(r.vehicle_from) + ' -> ' + esc(r.vehicle_to) + '</td><td style="font-size:12px;">' + esc(r.loader_name) + '</td><td>' + r.work_type + '</td><td>' + r.net_weight_kg + 'KG</td><td>&#x09F3;' + r.rate_per_ton + '</td><td style="font-weight:600;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</td><td>' + badge + '</td><td style="white-space:nowrap;"><button onclick="editRecord(\'' + r.__backendId + '\')" class="btn-secondary" style="padding:4px 8px;font-size:12px;margin-right:4px;"><i data-lucide="edit-2" style="width:14px;height:14px;"></i></button><button onclick="confirmDelete(\'' + r.__backendId + '\')" class="btn-secondary" style="padding:4px 8px;font-size:12px;"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td></tr>';
   }
   html += '</tbody></table>';
   div.innerHTML = '<div class="data-table-wrap">' + html + '</div>';
@@ -1167,7 +1219,9 @@ function renderRecords() {
 function renderPayments() {
   var filter = document.getElementById('payment-filter').value;
   var search = (document.getElementById('payment-search').value || '').toLowerCase();
+  var company = document.getElementById('payment-company-filter').value;
   var filtered = allData.filter(function(r) {
+    if (company && r.company_name !== company) return false;
     if (filter && r.payment_status !== filter) return false;
     if (search && !(r.loader_name||'').toLowerCase().indexOf(search) !== -1) return false;
     return true;
@@ -1176,14 +1230,14 @@ function renderPayments() {
   var div = document.getElementById('payments-table');
   if (filtered.length === 0) { div.innerHTML = '<p class="text-sm" style="color:#94a3b8;">No records found.</p>'; return; }
 
-  var html = '<table><thead><tr><th>Date</th><th>Serial</th><th>Dept</th><th>Vehicle</th><th>Weight (KG)</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+  var html = '<table><thead><tr><th>Date</th><th>Company</th><th>Serial</th><th>Dept</th><th>Vehicle</th><th>Weight (KG)</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>';
   for (var i = 0; i < filtered.length; i++) {
     var r = filtered[i];
     var badge = r.payment_status === 'Paid' ? '<span class="badge-paid">Paid</span>' : '<span class="badge-unpaid">Unpaid</span>';
     var actionBtn = r.payment_status === 'Unpaid'
       ? '<button onclick="markPaid(\'' + r.__backendId + '\')" class="btn-primary" style="padding:4px 12px;font-size:12px;">Mark Paid</button>'
       : '<span class="text-xs" style="color:#94a3b8;">' + (r.payment_date || '') + '</span>';
-    html += '<tr><td>' + r.date + '</td><td style="font-size:11px;">' + esc(r.serial_no) + '</td><td style="font-size:12px;">' + esc(r.loader_name) + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + r.net_weight_kg + 'KG</td><td style="font-weight:600;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</td><td>' + badge + '</td><td>' + actionBtn + '</td></tr>';
+    html += '<tr><td>' + r.date + '</td><td style="font-size:11px;">' + esc(r.company_name || '-') + '</td><td style="font-size:11px;">' + esc(r.serial_no) + '</td><td style="font-size:12px;">' + esc(r.loader_name) + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + r.net_weight_kg + 'KG</td><td style="font-weight:600;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</td><td>' + badge + '</td><td>' + actionBtn + '</td></tr>';
   }
   html += '</tbody></table>';
   div.innerHTML = '<div class="data-table-wrap">' + html + '</div>';
@@ -1194,7 +1248,7 @@ async function markPaid(id) {
   var rec = allData.find(function(r) { return r.__backendId === id; });
   if (!rec) return;
   var cleanRec = {
-    date: rec.date, serial_no: rec.serial_no, vehicle_number: rec.vehicle_number,
+    date: rec.date, company_name: rec.company_name, serial_no: rec.serial_no, vehicle_number: rec.vehicle_number,
     challan_number: rec.challan_number, vehicle_from: rec.vehicle_from, vehicle_to: rec.vehicle_to,
     loader_name: rec.loader_name, work_type: rec.work_type, net_weight_kg: rec.net_weight_kg,
     receive_qty_kg: rec.receive_qty_kg, delivery_qty_kg: rec.delivery_qty_kg,
@@ -1224,8 +1278,10 @@ function generateReport() {
   var to = document.getElementById('report-to').value;
   var deptEl = document.getElementById('report-dept');
   var statusEl = document.getElementById('report-status');
+  var companyEl = document.getElementById('report-company');
   var dept = deptEl ? deptEl.value : '';
   var status = statusEl ? statusEl.value : '';
+  var company = companyEl ? companyEl.value : '';
   var div = document.getElementById('report-output');
 
   reportData = allData.filter(function(r) {
@@ -1233,6 +1289,7 @@ function generateReport() {
     if (to && r.date > to) return false;
     if (dept && r.loader_name !== dept) return false;
     if (status && r.payment_status !== status) return false;
+    if (company && r.company_name !== company) return false;
     return true;
   }).sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
@@ -1248,7 +1305,7 @@ function generateReport() {
     var el = document.getElementById(id); if (el) el.classList.remove('hidden');
   });
 
-  var html = '<table><thead><tr><th>SL</th><th>Date</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Dept</th><th>Type</th><th>Weight</th><th>Receive</th><th>Delivery</th><th>Rate</th><th>Amount</th><th>Status</th><th>Pay Date</th><th>Remarks</th></tr></thead><tbody>';
+  var html = '<table><thead><tr><th>SL</th><th>Date</th><th>Company</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Dept</th><th>Type</th><th>Weight</th><th>Receive</th><th>Delivery</th><th>Rate</th><th>Amount</th><th>Status</th><th>Pay Date</th><th>Remarks</th></tr></thead><tbody>';
   var totalAmount = 0, totalTons = 0, totalPaid = 0, totalUnpaid = 0;
 
   for (var i = 0; i < reportData.length; i++) {
@@ -1258,11 +1315,11 @@ function generateReport() {
     totalTons += (r.net_weight_kg || 0) / 1000;
     if (r.payment_status === 'Paid') totalPaid += r.total_amount || 0;
     else totalUnpaid += r.total_amount || 0;
-    html += '<tr><td>' + (i + 1) + '</td><td>' + r.date + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td>' + esc(r.vehicle_from) + '</td><td>' + esc(r.vehicle_to) + '</td><td>' + esc(r.loader_name) + '</td><td>' + r.work_type + '</td><td>' + r.net_weight_kg + '</td><td>' + (r.receive_qty_kg||0) + '</td><td>' + (r.delivery_qty_kg||0) + '</td><td>&#x09F3;' + r.rate_per_ton + '</td><td style="font-weight:600;color:#4ade80;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</td><td>' + badge + '</td><td>' + (r.payment_date||'-') + '</td><td>' + esc(r.remarks||'') + '</td></tr>';
+    html += '<tr><td>' + (i + 1) + '</td><td>' + r.date + '</td><td style="font-size:11px;">' + esc(r.company_name || '-') + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td>' + esc(r.vehicle_from) + '</td><td>' + esc(r.vehicle_to) + '</td><td>' + esc(r.loader_name) + '</td><td>' + r.work_type + '</td><td>' + r.net_weight_kg + '</td><td>' + (r.receive_qty_kg||0) + '</td><td>' + (r.delivery_qty_kg||0) + '</td><td>&#x09F3;' + r.rate_per_ton + '</td><td style="font-weight:600;color:#4ade80;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</td><td>' + badge + '</td><td>' + (r.payment_date||'-') + '</td><td>' + esc(r.remarks||'') + '</td></tr>';
   }
 
-  html += '<tr style="border-top:2px solid #334155;background:var(--c-secondary);font-weight:700;"><td colspan="9">TOTAL</td><td>' + totalTons.toFixed(1) + ' Tons</td><td colspan="7"></td></tr>';
-  html += '<tr style="background:var(--c-secondary);font-weight:700;"><td colspan="13"></td><td style="color:#4ade80;">&#x09F3;' + totalAmount.toLocaleString() + '</td><td colspan="3">Paid: &#x09F3;' + totalPaid.toLocaleString() + ' | Due: &#x09F3;' + totalUnpaid.toLocaleString() + '</td></tr>';
+  html += '<tr style="border-top:2px solid #334155;background:var(--c-secondary);font-weight:700;"><td colspan="10">TOTAL</td><td>' + totalTons.toFixed(1) + ' Tons</td><td colspan="7"></td></tr>';
+  html += '<tr style="background:var(--c-secondary);font-weight:700;"><td colspan="14"></td><td style="color:#4ade80;">&#x09F3;' + totalAmount.toLocaleString() + '</td><td colspan="3">Paid: &#x09F3;' + totalPaid.toLocaleString() + ' | Due: &#x09F3;' + totalUnpaid.toLocaleString() + '</td></tr>';
   html += '</tbody></table>';
   div.innerHTML = '<div class="data-table-wrap">' + html + '</div>';
   lucide.createIcons();
@@ -1276,6 +1333,8 @@ function exportToExcel() {
   var deptLabel = dept || 'ALL DEPARTMENTS';
   var statusFilter = document.getElementById('report-status').value;
   var statusLabel = statusFilter || 'All Status';
+  var companyFilter = document.getElementById('report-company').value;
+  var companyLabel = companyFilter || 'ALL COMPANIES';
 
   var totalWeight = 0, totalReceive = 0, totalDelivery = 0, totalAmount = 0, totalPaid = 0, totalUnpaid = 0;
   for (var i = 0; i < reportData.length; i++) {
@@ -1315,21 +1374,22 @@ function exportToExcel() {
   html += '<tr><th style="background:#e8edf2;">Period</th><td>' + (from || 'All') + ' to ' + (to || 'All') + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Department</th><td>' + deptLabel + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Status</th><td>' + statusLabel + '</td></tr>';
+  html += '<tr><th style="background:#e8edf2;">Company</th><td>' + companyLabel + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Total Entries</th><td><b>' + reportData.length + '</b></td></tr>';
   html += '<tr><th style="background:#e8edf2;">Generated</th><td>' + new Date().toLocaleString() + '</td></tr></tbody></table>';
 
   html += '<table><thead><tr><th colspan="15" style="text-align:center;background:#1e3c72;color:#fff;font-size:13px;">TRANSACTION DETAILS</th></tr>';
-  html += '<tr><th>SL</th><th>Date</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Department</th><th>Type</th><th>Weight(KG)</th><th>Receive(KG)</th><th>Delivery(KG)</th><th>Rate</th><th>Amount</th><th>Status</th><th>Pay Date</th></tr></thead><tbody>';
+  html += '<tr><th>SL</th><th>Date</th><th>Company</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Department</th><th>Type</th><th>Weight(KG)</th><th>Receive(KG)</th><th>Delivery(KG)</th><th>Rate</th><th>Amount</th><th>Status</th><th>Pay Date</th></tr></thead><tbody>';
 
   for (var j = 0; j < reportData.length; j++) {
     var rd = reportData[j];
     var statusClass = rd.payment_status === 'Paid' ? 'paid-cell' : 'unpaid-cell';
-    html += '<tr><td style="text-align:center;">' + (j + 1) + '</td><td>' + rd.date + '</td><td>' + esc(rd.vehicle_number) + '</td><td>' + esc(rd.challan_number) + '</td><td>' + esc(rd.vehicle_from) + '</td><td>' + esc(rd.vehicle_to) + '</td><td>' + esc(rd.loader_name) + '</td><td>' + esc(rd.work_type) + '</td><td style="text-align:right;">' + (rd.net_weight_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.receive_qty_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.delivery_qty_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.rate_per_ton || 0).toLocaleString() + '</td><td style="text-align:right;font-weight:600;">' + (rd.total_amount || 0).toLocaleString() + '</td><td class="' + statusClass + '">' + rd.payment_status + '</td><td>' + (rd.payment_date || '-') + '</td></tr>';
+    html += '<tr><td style="text-align:center;">' + (j + 1) + '</td><td>' + rd.date + '</td><td>' + esc(rd.company_name || '-') + '</td><td>' + esc(rd.vehicle_number) + '</td><td>' + esc(rd.challan_number) + '</td><td>' + esc(rd.vehicle_from) + '</td><td>' + esc(rd.vehicle_to) + '</td><td>' + esc(rd.loader_name) + '</td><td>' + esc(rd.work_type) + '</td><td style="text-align:right;">' + (rd.net_weight_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.receive_qty_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.delivery_qty_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.rate_per_ton || 0).toLocaleString() + '</td><td style="text-align:right;font-weight:600;">' + (rd.total_amount || 0).toLocaleString() + '</td><td class="' + statusClass + '">' + rd.payment_status + '</td><td>' + (rd.payment_date || '-') + '</td></tr>';
   }
 
-  html += '<tr class="total-row"><td style="text-align:center;">' + reportData.length + '</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style="text-align:right;">' + totalWeight.toLocaleString() + '</td><td style="text-align:right;">' + totalReceive.toLocaleString() + '</td><td style="text-align:right;">' + totalDelivery.toLocaleString() + '</td><td></td><td style="text-align:right;">' + totalAmount.toLocaleString() + '</td><td class="paid-cell">Paid: ' + totalPaid.toLocaleString() + '</td><td></td></tr>';
-  html += '<tr class="total-row"><td colspan="9" style="text-align:right;">Receive & Delivery Total =</td><td colspan="2" style="text-align:right;">' + (totalReceive + totalDelivery).toLocaleString() + '</td><td colspan="3"></td></tr>';
-  html += '<tr class="grand-row"><td colspan="12" style="text-align:right;">GRAND TOTAL</td><td style="text-align:right;">' + totalAmount.toLocaleString() + '</td><td>Paid: ' + totalPaid.toLocaleString() + '</td><td>Due: ' + totalUnpaid.toLocaleString() + '</td></tr>';
+  html += '<tr class="total-row"><td style="text-align:center;">' + reportData.length + '</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style="text-align:right;">' + totalWeight.toLocaleString() + '</td><td style="text-align:right;">' + totalReceive.toLocaleString() + '</td><td style="text-align:right;">' + totalDelivery.toLocaleString() + '</td><td></td><td style="text-align:right;">' + totalAmount.toLocaleString() + '</td><td class="paid-cell">Paid: ' + totalPaid.toLocaleString() + '</td><td></td></tr>';
+  html += '<tr class="total-row"><td colspan="10" style="text-align:right;">Receive & Delivery Total =</td><td colspan="2" style="text-align:right;">' + (totalReceive + totalDelivery).toLocaleString() + '</td><td colspan="3"></td></tr>';
+  html += '<tr class="grand-row"><td colspan="13" style="text-align:right;">GRAND TOTAL</td><td style="text-align:right;">' + totalAmount.toLocaleString() + '</td><td>Paid: ' + totalPaid.toLocaleString() + '</td><td>Due: ' + totalUnpaid.toLocaleString() + '</td></tr>';
   html += '</tbody></table>';
 
   html += '<br><table><tr>';
@@ -1358,6 +1418,8 @@ function exportSummaryExcel() {
   var deptLabel = dept || 'ALL DEPARTMENTS';
   var statusFilter = document.getElementById('report-status').value;
   var statusLabel = statusFilter || 'All Status';
+  var companyFilter = document.getElementById('report-company').value;
+  var companyLabel = companyFilter || 'ALL COMPANIES';
   var monthLabel = from ? getMonthName(from.substring(0, 7)) : '';
 
   var totalWeight = 0, totalReceive = 0, totalDelivery = 0, totalAmount = 0, totalPaid = 0, totalUnpaid = 0;
@@ -1391,6 +1453,7 @@ function exportSummaryExcel() {
   html += '<tr><th style="background:#e8edf2;">Period</th><td>' + (from || 'All') + ' to ' + (to || 'All') + (monthLabel ? ' (' + monthLabel + ')' : '') + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Department</th><td>' + deptLabel + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Payment Status</th><td>' + statusLabel + '</td></tr>';
+  html += '<tr><th style="background:#e8edf2;">Company</th><td>' + companyLabel + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Total Entries</th><td><b>' + reportData.length + '</b></td></tr>';
   html += '<tr><th style="background:#e8edf2;">Generated On</th><td>' + new Date().toLocaleString() + '</td></tr></tbody></table>';
 
@@ -1415,13 +1478,13 @@ function exportSummaryExcel() {
     html += '</tbody></table>';
   }
 
-  html += '<br><table><thead><tr><th colspan="11" style="text-align:center;font-size:11px;background:#1e3c72;color:#fff;">DETAILED TRANSACTION DATA</th></tr>';
-  html += '<tr><th>SL</th><th>Date</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Department</th><th>Type</th><th>Weight(KG)</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+  html += '<br><table><thead><tr><th colspan="12" style="text-align:center;font-size:11px;background:#1e3c72;color:#fff;">DETAILED TRANSACTION DATA</th></tr>';
+  html += '<tr><th>SL</th><th>Date</th><th>Company</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Department</th><th>Type</th><th>Weight(KG)</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
   for (var j = 0; j < reportData.length; j++) {
     var rd = reportData[j];
-    html += '<tr><td style="text-align:center;">' + (j + 1) + '</td><td>' + rd.date + '</td><td>' + esc(rd.vehicle_number) + '</td><td>' + esc(rd.challan_number) + '</td><td>' + esc(rd.vehicle_from) + '</td><td>' + esc(rd.vehicle_to) + '</td><td>' + esc(rd.loader_name) + '</td><td>' + esc(rd.work_type) + '</td><td style="text-align:right;">' + (rd.net_weight_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.total_amount || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td><td>' + rd.payment_status + '</td></tr>';
+    html += '<tr><td style="text-align:center;">' + (j + 1) + '</td><td>' + rd.date + '</td><td>' + esc(rd.company_name || '-') + '</td><td>' + esc(rd.vehicle_number) + '</td><td>' + esc(rd.challan_number) + '</td><td>' + esc(rd.vehicle_from) + '</td><td>' + esc(rd.vehicle_to) + '</td><td>' + esc(rd.loader_name) + '</td><td>' + esc(rd.work_type) + '</td><td style="text-align:right;">' + (rd.net_weight_kg || 0).toLocaleString() + '</td><td style="text-align:right;">' + (rd.total_amount || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td><td>' + rd.payment_status + '</td></tr>';
   }
-  html += '<tr class="grand-row"><td colspan="8" style="text-align:right;">GRAND TOTAL</td><td style="text-align:right;">' + totalWeight.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td><td style="text-align:right;">' + totalAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td><td></td></tr></tbody></table>';
+  html += '<tr class="grand-row"><td colspan="9" style="text-align:right;">GRAND TOTAL</td><td style="text-align:right;">' + totalWeight.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td><td style="text-align:right;">' + totalAmount.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td><td></td></tr></tbody></table>';
 
   html += '<br><table><tr>';
   html += '<td class="sig-section" style="text-align:center;width:25%;"><div class="sig-box"></div><div class="sig-label">Prepared By</div></td>';
@@ -1455,6 +1518,8 @@ function printReport() {
   var dept = document.getElementById('report-dept').value;
   var deptLabel = dept || 'ALL DEPARTMENTS';
   var monthLabel = from ? getMonthName(from.substring(0, 7)) : '';
+  var companyFilter = document.getElementById('report-company').value;
+  var companyLabel = companyFilter || 'ALL COMPANIES';
 
   var totalWeight = 0, totalReceive = 0, totalDelivery = 0, totalAmount = 0, totalPaid = 0, totalUnpaid = 0;
   for (var i = 0; i < reportData.length; i++) {
@@ -1470,15 +1535,15 @@ function printReport() {
   var rowsHtml = '';
   for (var j = 0; j < reportData.length; j++) {
     var r = reportData[j];
-    rowsHtml += '<tr><td style="text-align:center;">' + (j+1) + '</td><td>' + r.date + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td>' + esc(r.vehicle_from) + '</td><td>' + esc(r.vehicle_to) + '</td><td>' + esc(r.loader_name) + '</td><td>' + esc(r.work_type) + '</td><td style="text-align:right;">' + (r.net_weight_kg||0).toLocaleString() + '</td><td style="text-align:right;">' + (r.receive_qty_kg||0).toLocaleString() + '</td><td style="text-align:right;">' + (r.delivery_qty_kg||0).toLocaleString() + '</td><td>' + esc(r.remarks||'') + '</td></tr>';
+    rowsHtml += '<tr><td style="text-align:center;">' + (j+1) + '</td><td>' + r.date + '</td><td>' + esc(r.company_name || '-') + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td>' + esc(r.vehicle_from) + '</td><td>' + esc(r.vehicle_to) + '</td><td>' + esc(r.loader_name) + '</td><td>' + esc(r.work_type) + '</td><td style="text-align:right;">' + (r.net_weight_kg||0).toLocaleString() + '</td><td style="text-align:right;">' + (r.receive_qty_kg||0).toLocaleString() + '</td><td style="text-align:right;">' + (r.delivery_qty_kg||0).toLocaleString() + '</td><td>' + esc(r.remarks||'') + '</td></tr>';
   }
 
   var printHtml = '<div class="pp-company-header"><h1>GMS COMPOSITE KNITTING IND. LTD.</h1><p>Sardagonj, Kashimpur, Gazipur</p></div>';
   printHtml += '<div class="pp-report-title">Contract Loader Transaction Details - ' + monthLabel + ' (' + deptLabel + ')</div>';
-  printHtml += '<table class="pp-table"><thead><tr><th>SL</th><th>Date</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Dept</th><th>Type</th><th>Weight(KG)</th><th>Receive(KG)</th><th>Delivery(KG)</th><th>Remarks</th></tr></thead><tbody>';
+  printHtml += '<table class="pp-table"><thead><tr><th>SL</th><th>Date</th><th>Company</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Dept</th><th>Type</th><th>Weight(KG)</th><th>Receive(KG)</th><th>Delivery(KG)</th><th>Remarks</th></tr></thead><tbody>';
   printHtml += rowsHtml;
-  printHtml += '<tr class="pp-total-row"><td style="text-align:center;">' + reportData.length + '</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style="text-align:right;">' + totalWeight.toLocaleString() + '</td><td style="text-align:right;">' + totalReceive.toLocaleString() + '</td><td style="text-align:right;">' + totalDelivery.toLocaleString() + '</td><td></td></tr>';
-  printHtml += '<tr class="pp-total-row"><td colspan="9" style="text-align:right;">Receive & Delivery Total =</td><td colspan="2" style="text-align:right;">' + (totalReceive + totalDelivery).toLocaleString() + '</td><td></td></tr>';
+  printHtml += '<tr class="pp-total-row"><td style="text-align:center;">' + reportData.length + '</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style="text-align:right;">' + totalWeight.toLocaleString() + '</td><td style="text-align:right;">' + totalReceive.toLocaleString() + '</td><td style="text-align:right;">' + totalDelivery.toLocaleString() + '</td><td></td></tr>';
+  printHtml += '<tr class="pp-total-row"><td colspan="10" style="text-align:right;">Receive & Delivery Total =</td><td colspan="2" style="text-align:right;">' + (totalReceive + totalDelivery).toLocaleString() + '</td><td></td></tr>';
   printHtml += '</tbody></table>';
   printHtml += '<div class="pp-sig-section"><div class="pp-sig-grid">';
   printHtml += '<div><div class="pp-sig-box"></div><div class="pp-sig-label">Prepared By</div></div>';
@@ -1598,6 +1663,7 @@ function editRecord(id) {
   if (!rec) return;
   var container = document.getElementById('edit-form-container');
   var html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Company</label><select id="edit-company"><option value="GMS COMPOSITE KNITTING IND LTD"' + (rec.company_name === 'GMS COMPOSITE KNITTING IND LTD' ? ' selected' : '') + '>GMS COMPOSITE KNITTING IND LTD</option><option value="GMS TEXTILES LTD"' + (rec.company_name === 'GMS TEXTILES LTD' ? ' selected' : '') + '>GMS TEXTILES LTD</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Date</label><input type="date" id="edit-date" value="' + rec.date + '"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Serial No</label><input type="text" id="edit-serial" value="' + esc(rec.serial_no) + '" readonly style="opacity:.6;"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle Number</label><input type="text" id="edit-vehicle" value="' + esc(rec.vehicle_number) + '"></div>';
@@ -1662,6 +1728,7 @@ async function saveEditRecord() {
   var scaleQty = (workType === 'Loading') ? deliveryQty : receiveQty;
   var updatedRec = {
     date: document.getElementById('edit-date').value,
+    company_name: document.getElementById('edit-company').value,
     serial_no: rec.serial_no,
     vehicle_number: document.getElementById('edit-vehicle').value.trim(),
     challan_number: document.getElementById('edit-challan').value.trim(),
@@ -1698,7 +1765,7 @@ async function saveEditRecord() {
 
 function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
 
-var DELETE_PASSWORD = '290144';
+var DELETE_PASSWORD = 'admin123';
 
 function confirmDelete(id) {
   document.getElementById('confirm-modal').classList.remove('hidden');
@@ -1761,6 +1828,20 @@ function updateDashboard() {
   document.getElementById('stat-week-count').textContent = weekCount;
   document.getElementById('stat-month-count').textContent = monthCount;
   document.getElementById('stat-total-count').textContent = allData.length;
+
+  // Company-wise stats
+  var compRecs = allData.filter(function(r) { return r.company_name === 'GMS COMPOSITE KNITTING IND LTD'; });
+  var textRecs = allData.filter(function(r) { return r.company_name === 'GMS TEXTILES LTD'; });
+  var compWeight = compRecs.reduce(function(s, r) { return s + (r.net_weight_kg || 0); }, 0);
+  var compAmount = compRecs.reduce(function(s, r) { return s + (r.total_amount || 0); }, 0);
+  var textWeight = textRecs.reduce(function(s, r) { return s + (r.net_weight_kg || 0); }, 0);
+  var textAmount = textRecs.reduce(function(s, r) { return s + (r.total_amount || 0); }, 0);
+  document.getElementById('stat-comp-count').textContent = compRecs.length;
+  document.getElementById('stat-comp-weight').textContent = compWeight.toLocaleString();
+  document.getElementById('stat-comp-amount').innerHTML = '&#x09F3;' + compAmount.toLocaleString();
+  document.getElementById('stat-text-count').textContent = textRecs.length;
+  document.getElementById('stat-text-weight').textContent = textWeight.toLocaleString();
+  document.getElementById('stat-text-amount').innerHTML = '&#x09F3;' + textAmount.toLocaleString();
 
   // Transaction summary last 7 days
   var summaryDiv = document.getElementById('transaction-summary');
@@ -1864,6 +1945,7 @@ function generateDeptSummary() {
 
   var fromDate = document.getElementById('ds-from').value;
   var toDate = document.getElementById('ds-to').value;
+  var company = document.getElementById('ds-company').value;
   var combine = document.getElementById('ds-combine').checked;
   var isAllDept = (dept === '__ALL__');
 
@@ -1871,6 +1953,7 @@ function generateDeptSummary() {
   var dateFiltered = allData.slice();
   if (fromDate) dateFiltered = dateFiltered.filter(function(r) { return r.date >= fromDate; });
   if (toDate) dateFiltered = dateFiltered.filter(function(r) { return r.date <= toDate; });
+  if (company) dateFiltered = dateFiltered.filter(function(r) { return r.company_name === company; });
 
   // Filter by department (or all)
   var filtered = isAllDept ? dateFiltered : dateFiltered.filter(function(r) { return r.loader_name === dept; });
@@ -2294,8 +2377,4 @@ function showToast(msg, color) {
 lucide.createIcons();
   </script>
  </body>
-</html>
-    
-  </body>
-  
 </html>
