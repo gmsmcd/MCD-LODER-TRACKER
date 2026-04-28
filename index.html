@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GMS MCD SUB-CONTRACT LOAD TRACKER</title>
+    <title>GMS MCD VEHICLE TRACKER</title>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -54,7 +54,7 @@
     table { width: 100%; border-collapse: collapse; }
     th { text-align: left; padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #94a3b8; border-bottom: 1px solid #334155; }
     td { padding: 10px 12px; border-bottom: 1px solid #1e293b; font-size: 14px; }
-    tr:hover td { background: #3b82f633; }
+    tr:hover td { background: inherit; filter: brightness(1.3); }
     .modal-overlay { position: fixed; inset: 0; background: #00000088; z-index: 9000; display: none; align-items: center; justify-content: center; }
     .modal-overlay:not(.hidden) { display: flex; }
     .modal-overlay.hidden { display: none !important; }
@@ -219,11 +219,9 @@
    <!-- Header -->
    <header class="flex items-center justify-between px-4 py-3" style="background:var(--c-surface);border-bottom:1px solid #334155;">
     <div class="flex items-center gap-3">
-     <div style="background:var(--c-primary);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-      <i data-lucide="truck" style="width:20px;height:20px;color:#fff;"></i>
-     </div>
+     <img src="https://logicsoftbd.com/uploads/topics/17617174971527.png" alt="GMS Logo" style="width:42px;height:42px;border-radius:8px;object-fit:contain;">
      <div>
-      <h1 id="header-title" class="text-lg font-bold" style="line-height:1.2;">MCD SUBCONTRACT TRACKER</h1>
+      <h1 id="header-title" class="text-lg font-bold" style="line-height:1.2;">GMS MCD VEHICLE TRACKER</h1>
       <p id="header-company" class="text-xs" style="color:#94a3b8;">GMS COMPOSITE & GMS TEXTILES</p>
      </div>
     </div>
@@ -340,6 +338,7 @@
       <div id="recent-entries" class="overflow-x-auto">
        <p class="text-sm" style="color:#94a3b8;">No entries yet.</p>
       </div>
+      <div id="recent-serials" class="card mt-3" style="border-left:4px solid #f59e0b;"></div>
      </div>
     </div>
 
@@ -877,6 +876,15 @@ async function loadAllData() {
   lastDataHash = computeDataHash();
 }
 
+// Get current date in local timezone (Bangladesh/Asia)
+function getLocalDate() {
+  var d = new Date();
+  var year = d.getFullYear();
+  var month = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return year + '-' + month + '-' + day;
+}
+
 function refreshUI() {
   updateDashboard();
   populateFormDropdowns();
@@ -1009,7 +1017,7 @@ function switchTab(tab) {
   }
   if (tab === 'entry') {
     document.getElementById('f-serial').value = generateUniqueSerial();
-    document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('f-date').value = getLocalDate();
   }
   lucide.createIcons();
 }
@@ -1164,7 +1172,7 @@ async function handleSubmit(e) {
 function resetForm() {
   document.getElementById('entry-form').reset();
   document.getElementById('f-serial').value = generateUniqueSerial();
-  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value = getLocalDate();
   document.getElementById('f-total').value = '';
   document.getElementById('f-rate').value = '';
   document.getElementById('duplicate-warning').classList.add('hidden');
@@ -1816,8 +1824,9 @@ function closeConfirm() { document.getElementById('confirm-modal').classList.add
 var trendChart = null, worktypeChart = null, deptChart = null;
 
 function updateDashboard() {
-  var today = new Date().toISOString().split('T')[0];
-  var weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+  var today = getLocalDate();
+  var wa = new Date(); wa.setDate(wa.getDate() - 7);
+  var weekAgo = wa.getFullYear() + '-' + String(wa.getMonth()+1).padStart(2,'0') + '-' + String(wa.getDate()).padStart(2,'0');
   var monthStart = today.substring(0, 8) + '01';
 
   var todayCount = allData.filter(function(r) { return r.date === today; }).length;
@@ -1847,9 +1856,10 @@ function updateDashboard() {
   var summaryDiv = document.getElementById('transaction-summary');
   var summaryHtml = '';
   for (var d = 6; d >= 0; d--) {
-    var date = new Date(Date.now() - d * 86400000).toISOString().split('T')[0];
+    var sd = new Date(); sd.setDate(sd.getDate() - d);
+    var date = sd.getFullYear() + '-' + String(sd.getMonth()+1).padStart(2,'0') + '-' + String(sd.getDate()).padStart(2,'0');
     var count = allData.filter(function(r) { return r.date === date; }).length;
-    var dayLabel = new Date(Date.now() - d * 86400000).toLocaleDateString('en', { weekday: 'short' });
+    var dayLabel = sd.toLocaleDateString('en', { weekday: 'short' });
     summaryHtml += '<div class="card" style="padding:8px;text-align:center;border-radius:8px;"><div class="text-xs" style="color:#94a3b8;">' + dayLabel + '</div><div class="text-lg font-bold">' + count + '</div></div>';
   }
   summaryDiv.innerHTML = summaryHtml;
@@ -1857,7 +1867,8 @@ function updateDashboard() {
   // Trend chart (last 30 days) — Company-wise comparison
   var trendLabels = [], trendComp = [], trendText = [];
   for (var t = 29; t >= 0; t--) {
-    var tDate = new Date(Date.now() - t * 86400000).toISOString().split('T')[0];
+    var td = new Date(); td.setDate(td.getDate() - t);
+    var tDate = td.getFullYear() + '-' + String(td.getMonth()+1).padStart(2,'0') + '-' + String(td.getDate()).padStart(2,'0');
     trendLabels.push(tDate.substring(5));
     var dayRecs = allData.filter(function(r) { return r.date === tDate; });
     trendComp.push(dayRecs.filter(function(r) { return r.company_name === 'GMS COMPOSITE KNITTING IND LTD'; }).length);
@@ -1925,20 +1936,33 @@ function updateDashboard() {
   deptSummaryHtml += '</tbody></table>';
   document.getElementById('dept-summary').innerHTML = deptSummaryHtml;
 
-  // Recent entries (today)
-  var recentHtml = '<table><thead><tr><th>Time</th><th>Vehicle</th><th>Dept</th><th>Type</th><th>Weight</th><th>Amount</th></tr></thead><tbody>';
-  var todayRecs = allData.filter(function(r) { return r.date === today; }).sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }).slice(0, 10);
-  if (todayRecs.length === 0) {
+  // Recent entries (today) — latest 4 by created_at, company-colored rows
+  var todayRecs = allData.filter(function(r) { return r.date === today; });
+  todayRecs.sort(function(a, b) {
+    var ta = a.created_at ? new Date(a.created_at).getTime() : 0;
+    var tb = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return tb - ta;
+  });
+  var latest4 = todayRecs.slice(0, 4);
+  var recentHtml = '<table><thead><tr style="background:#334155;"><th style="padding:10px 8px;">#</th><th style="padding:10px 8px;">Time</th><th style="padding:10px 8px;">Vehicle</th><th style="padding:10px 8px;">Company</th><th style="padding:10px 8px;">Dept</th><th style="padding:10px 8px;">Type</th><th style="padding:10px 8px;">Weight</th><th style="padding:10px 8px;">Amount</th></tr></thead><tbody>';
+  if (latest4.length === 0) {
     recentHtml = '<p class="text-sm" style="color:#94a3b8;">No entries today.</p>';
   } else {
-    for (var ri = 0; ri < todayRecs.length; ri++) {
-      var rr = todayRecs[ri];
-      var time = rr.created_at ? new Date(rr.created_at).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }) : '';
-      recentHtml += '<tr><td>' + time + '</td><td>' + esc(rr.vehicle_number) + '</td><td style="font-size:12px;">' + esc(rr.loader_name) + '</td><td>' + esc(rr.work_type) + '</td><td>' + (rr.net_weight_kg||0) + 'KG</td><td style="font-weight:600;">&#x09F3;' + (rr.total_amount||0).toLocaleString() + '</td></tr>';
+    for (var ri = 0; ri < latest4.length; ri++) {
+      var rr = latest4[ri];
+      var time = rr.created_at ? new Date(rr.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '--:--';
+      var isTextiles = (rr.company_name === 'GMS TEXTILES LTD');
+      var compShort = isTextiles ? 'TEXTILES' : 'COMPOSITE';
+      var compColor = isTextiles ? '#f59e0b' : '#3b82f6';
+      var rowBg = isTextiles ? 'background:linear-gradient(90deg,#f59e0b35,#f59e0b12);border-left:4px solid #f59e0b;' : 'background:linear-gradient(90deg,#3b82f635,#3b82f612);border-left:4px solid #3b82f6;';
+      var timeColor = isTextiles ? 'color:#fbbf24;' : 'color:#93c5fd;';
+      recentHtml += '<tr style="' + rowBg + '"><td style="font-weight:700;color:#94a3b8;font-size:12px;">' + (ri+1) + '</td><td style="font-weight:700;color:#e2e8f0;font-size:13px;">' + time + '</td><td style="font-weight:600;font-size:13px;">' + esc(rr.vehicle_number) + '</td><td><span style="font-size:11px;color:' + compColor + ';font-weight:700;background:' + compColor + '20;padding:3px 8px;border-radius:5px;">' + compShort + '</span></td><td style="font-size:12px;">' + esc(rr.loader_name) + '</td><td>' + esc(rr.work_type) + '</td><td>' + (rr.net_weight_kg||0) + 'KG</td><td style="font-weight:700;color:#4ade80;">&#x09F3;' + (rr.total_amount||0).toLocaleString() + '</td></tr>';
     }
     recentHtml += '</tbody></table>';
   }
   document.getElementById('recent-entries').innerHTML = recentHtml;
+  var serialsEl = document.getElementById('recent-serials');
+  if (serialsEl) serialsEl.innerHTML = '';
 }
 
 // =============================================
@@ -2390,7 +2414,7 @@ function printDeptSummary() {
   pw.document.write('</style></head><body>');
 
   // Header
-  pw.document.write('<div class="header"><h1>GMS COMPOSITE KNITTING IND LTD</h1><p>MCD Subcontract Load Tracker</p></div>');
+  pw.document.write('<div class="header"><h1>GMS COMPOSITE & GMS TEXTILES</h1><p>GMS MCD Vehicle Tracker</p></div>');
   pw.document.write('<div class="report-title">Department Summary: ' + data.deptLabel + '</div>');
   pw.document.write('<div class="meta">Date Range: ' + dateRange + ' | Total Entries: ' + data.totalCount + '</div>');
 
