@@ -211,9 +211,79 @@
     }
     [data-theme="light"] .theme-toggle .toggle-circle { transform: translateX(22px); }
     .toggle-circle svg { width: 12px; height: 12px; color: #fff; }
+
+    /* ===== Login Screen ===== */
+    .login-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+    }
+    .login-card {
+      background: #1e293b; border: 1px solid #334155; border-radius: 16px;
+      padding: 40px; width: 90%; max-width: 420px; text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .login-card img { width: 80px; height: 80px; border-radius: 12px; margin: 0 auto 16px; display: block; object-fit: contain; }
+    .login-card h2 { color: #e2e8f0; font-size: 22px; margin: 0 0 4px; font-family: 'Poppins', sans-serif; }
+    .login-card .login-subtitle { color: #94a3b8; font-size: 13px; margin-bottom: 24px; }
+    .login-card label { display: block; text-align: left; font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 6px; }
+    .login-card input[type="email"], .login-card input[type="password"] {
+      background: #0f172a !important; border: 1px solid #334155 !important;
+      color: #e2e8f0 !important; border-radius: 10px; padding: 12px 14px;
+      width: 100%; font-size: 15px; margin-bottom: 16px; box-sizing: border-box;
+    }
+    .login-card input:focus { border-color: #3b82f6 !important; outline: none; box-shadow: 0 0 0 3px #3b82f633; }
+    .login-btn {
+      background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff;
+      padding: 13px 24px; border-radius: 10px; font-weight: 700; font-size: 16px;
+      cursor: pointer; border: none; width: 100%; transition: all .2s;
+    }
+    .login-btn:hover { opacity: .9; transform: translateY(-1px); }
+    .login-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .login-error { color: #f87171; font-size: 13px; margin-top: 12px; min-height: 20px; }
+    .login-footer { color: #475569; font-size: 11px; margin-top: 20px; }
+    .login-footer span { color: #3b82f6; font-weight: 600; }
+    .login-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff3; border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== Leaderboard ===== */
+    .leaderboard-card {
+      background: linear-gradient(135deg, var(--c-surface), #1a2744);
+      border: 1px solid #334155; border-radius: 14px; padding: 16px;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .leaderboard-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .rank-badge {
+      width: 36px; height: 36px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-weight: 800; font-size: 16px;
+    }
+    .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; box-shadow: 0 0 12px #fbbf2444; }
+    .rank-2 { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: #374151; box-shadow: 0 0 12px #d1d5db44; }
+    .rank-3 { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; box-shadow: 0 0 12px #f9731644; }
+    .rank-other { background: #334155; color: #94a3b8; }
+    .leaderboard-bar { height: 6px; border-radius: 3px; background: #1e293b; overflow: hidden; }
+    .leaderboard-bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
     </style>
  </head>
  <body class="h-full" style="background:var(--c-bg);color:var(--c-text);">
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-overlay">
+   <div class="login-card">
+    <img src="https://logicsoftbd.com/uploads/topics/17617174971527.png" alt="GMS Logo">
+    <h2>GMS MCD VEHICLE TRACKER</h2>
+    <p class="login-subtitle">GMS COMPOSITE & GMS TEXTILES</p>
+    <form id="login-form" onsubmit="handleLogin(event)" autocomplete="on">
+      <label>Email Address</label>
+      <input type="text" id="login-email" required placeholder="Enter your email" autocomplete="username" name="email">
+      <label>Password</label>
+      <input type="password" id="login-password" required placeholder="Enter your password" autocomplete="current-password" name="password">
+      <button type="submit" class="login-btn" id="login-btn">Sign In</button>
+      <div class="login-error" id="login-error"></div>
+    </form>
+    <div class="login-footer">Secured by <span>Firebase Authentication</span></div>
+   </div>
+  </div>
   <div id="app" class="h-full flex flex-col overflow-auto" style="width:100%;">
 
    <!-- Header -->
@@ -231,6 +301,9 @@
       <span id="sync-text">Connecting...</span>
      </span>
      <span id="record-count" class="text-xs" style="color:#94a3b8;"></span>
+     <button onclick="handleLogout()" class="btn-secondary" style="padding:4px 10px;font-size:11px;border-radius:6px;" title="Logout">
+      <i data-lucide="log-out" style="width:14px;height:14px;"></i>
+     </button>
      <button onclick="toggleTheme()" class="theme-toggle" id="theme-toggle-btn" title="Toggle Dark/Light Mode">
       <div class="toggle-circle" id="toggle-circle">
        <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -259,6 +332,9 @@
     </button>
     <button onclick="switchTab('dept-summary')" id="tab-dept-summary" class="tab-inactive flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all">
      <i data-lucide="pie-chart" style="width:16px;height:16px;"></i> Dept Summary
+    </button>
+    <button onclick="switchTab('vehicle-history')" id="tab-vehicle-history" class="tab-inactive flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all">
+     <i data-lucide="search" style="width:16px;height:16px;"></i> Vehicle History
     </button>
    </nav>
 
@@ -332,6 +408,11 @@
       <div id="dept-summary" class="overflow-x-auto">
        <p class="text-sm" style="color:#94a3b8;">No data yet. Add entries to see activity.</p>
       </div>
+     </div>
+     <div class="card mb-4" style="border-left:4px solid #f59e0b;">
+      <h3 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="trophy" style="width:18px;height:18px;color:#f59e0b;"></i> Department Performance Leaderboard</h3>
+      <p class="text-xs mb-3" style="color:#94a3b8;">Ranked by total entries this month</p>
+      <div id="leaderboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
      </div>
      <div class="card">
       <h3 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="clock" style="width:18px;height:18px;color:var(--c-primary);"></i> Latest Transactions (Today)</h3>
@@ -478,6 +559,20 @@
        <p style="color:#94a3b8;font-size:15px;">Select a Department and click <b>Generate</b> to view summary.</p>
       </div>
      </div>
+    </div>
+
+    <!-- VEHICLE HISTORY TIMELINE -->
+    <div id="page-vehicle-history" class="hidden">
+     <div class="card mb-4" style="border-left:4px solid #3b82f6;">
+      <h3 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="truck" style="width:18px;height:18px;color:#3b82f6;"></i> Vehicle History Timeline</h3>
+      <p class="text-xs mb-3" style="color:#94a3b8;">Search any vehicle number to see its complete transaction history with timeline view.</p>
+      <div class="flex gap-3 items-center flex-wrap">
+       <input type="text" id="vh-search" placeholder="Type vehicle number..." list="dl-vehicle" style="max-width:320px;" onkeydown="if(event.key==='Enter')searchVehicleHistory()">
+       <button onclick="searchVehicleHistory()" class="btn-primary flex items-center gap-2" style="padding:10px 20px;"><i data-lucide="search" style="width:16px;height:16px;"></i> Search</button>
+       <button onclick="clearVehicleSearch()" class="btn-secondary flex items-center gap-2" style="padding:10px 16px;"><i data-lucide="x-circle" style="width:14px;height:14px;"></i> Clear</button>
+      </div>
+     </div>
+     <div id="vh-result"></div>
     </div>
 
     <!-- REPORTS -->
@@ -807,7 +902,7 @@ function computeDataHash() {
 }
 
 function getActiveTabId() {
-  var tabs = ['dashboard', 'entry', 'records', 'payments', 'reports', 'dept-summary'];
+  var tabs = ['dashboard', 'entry', 'records', 'payments', 'reports', 'dept-summary', 'vehicle-history'];
   for (var i = 0; i < tabs.length; i++) {
     var page = document.getElementById('page-' + tabs[i]);
     if (page && !page.classList.contains('hidden')) return tabs[i];
@@ -1001,7 +1096,7 @@ function updateThemeIcons() {
 var activeTab = 'dashboard';
 function switchTab(tab) {
   activeTab = tab;
-  var tabs = ['dashboard','entry','records','payments','reports','dept-summary'];
+  var tabs = ['dashboard','entry','records','payments','reports','dept-summary','vehicle-history'];
   for (var i = 0; i < tabs.length; i++) {
     var t = tabs[i];
     document.getElementById('page-' + t).classList.toggle('hidden', t !== tab);
@@ -1936,6 +2031,45 @@ function updateDashboard() {
   deptSummaryHtml += '</tbody></table>';
   document.getElementById('dept-summary').innerHTML = deptSummaryHtml;
 
+  // Department Performance Leaderboard
+  var deptStats = {};
+  var monthRecs = allData.filter(function(r) { return r.date >= monthStart; });
+  monthRecs.forEach(function(r) {
+    var dept = r.loader_name || 'Unknown';
+    if (!deptStats[dept]) deptStats[dept] = { entries: 0, weight: 0, amount: 0 };
+    deptStats[dept].entries++;
+    deptStats[dept].weight += (r.net_weight_kg || 0);
+    deptStats[dept].amount += (r.total_amount || 0);
+  });
+  var deptArr = Object.keys(deptStats).map(function(k) { return { name: k, entries: deptStats[k].entries, weight: deptStats[k].weight, amount: deptStats[k].amount }; });
+  deptArr.sort(function(a, b) { return b.entries - a.entries; });
+  
+  var maxEntries = deptArr.length > 0 ? deptArr[0].entries : 1;
+  var lbHtml = '';
+  var medals = ['🥇','🥈','🥉'];
+  var barColors = ['#fbbf24','#9ca3af','#f97316','#3b82f6','#10b981','#8b5cf6','#ec4899','#06b6d4'];
+  
+  for (var lb = 0; lb < deptArr.length; lb++) {
+    var dept = deptArr[lb];
+    var rank = lb + 1;
+    var rankClass = rank <= 3 ? 'rank-' + rank : 'rank-other';
+    var barColor = barColors[lb % barColors.length];
+    var pct = Math.round((dept.entries / maxEntries) * 100);
+    
+    lbHtml += '<div class="leaderboard-card">';
+    lbHtml += '<div class="flex items-center gap-3 mb-2">';
+    lbHtml += '<div class="rank-badge ' + rankClass + '">' + (rank <= 3 ? medals[rank-1] : rank) + '</div>';
+    lbHtml += '<div style="flex:1;"><div style="font-weight:700;font-size:14px;color:#e2e8f0;">' + esc(dept.name) + '</div>';
+    lbHtml += '<div style="font-size:11px;color:#94a3b8;">' + dept.entries + ' entries | ' + dept.weight.toLocaleString() + ' KG</div></div>';
+    lbHtml += '<div style="text-align:right;"><div style="font-size:16px;font-weight:800;color:#4ade80;">&#x09F3;' + dept.amount.toLocaleString() + '</div></div>';
+    lbHtml += '</div>';
+    lbHtml += '<div class="leaderboard-bar"><div class="leaderboard-bar-fill" style="width:' + pct + '%;background:' + barColor + ';"></div></div>';
+    lbHtml += '</div>';
+  }
+  
+  var lbEl = document.getElementById('leaderboard');
+  if (lbEl) lbEl.innerHTML = lbHtml;
+
   // Recent entries (today) — latest 4 by created_at, company-colored rows
   var todayRecs = allData.filter(function(r) { return r.date === today; });
   todayRecs.sort(function(a, b) {
@@ -2502,6 +2636,176 @@ function showToast(msg, color) {
 
 // Initialize icons
 lucide.createIcons();
+
+// =============================================
+//  FIREBASE AUTHENTICATION
+// =============================================
+var AUTH_API_KEY = 'AIzaSyCTOratoL61j80ZWaPy7z66-aPtqNi0hlc';
+var AUTH_URL = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + AUTH_API_KEY;
+var currentUser = null;
+
+// Check saved session
+(function checkSession() {
+  var saved = localStorage.getItem('gms_user');
+  if (saved) {
+    try { currentUser = JSON.parse(saved); } catch(e) { localStorage.removeItem('gms_user'); }
+  }
+  if (currentUser) {
+    document.getElementById('login-screen').style.display = 'none';
+  }
+})();
+
+async function handleLogin(e) {
+  e.preventDefault();
+  var email = document.getElementById('login-email').value.trim();
+  var password = document.getElementById('login-password').value;
+  var btn = document.getElementById('login-btn');
+  var errEl = document.getElementById('login-error');
+  
+  btn.disabled = true;
+  btn.innerHTML = '<span class="login-spinner"></span> Signing in...';
+  errEl.textContent = '';
+  
+  try {
+    var res = await fetch(AUTH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password, returnSecureToken: true })
+    });
+    var data = await res.json();
+    
+    if (data.error) {
+      errEl.textContent = data.error.message === 'INVALID_LOGIN_CREDENTIALS' ? 'Invalid email or password!' : data.error.message;
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In';
+      return;
+    }
+    
+    currentUser = { email: data.email, uid: data.localId, token: data.idToken, displayName: data.displayName || email.split('@')[0] };
+    localStorage.setItem('gms_user', JSON.stringify(currentUser));
+    
+    // Hide login, show app
+    document.getElementById('login-screen').style.display = 'none';
+    showToast('Welcome, ' + currentUser.displayName + '!', '#22c55e');
+    
+    // Trigger browser password save prompt
+    if (window.PasswordCredential) {
+      var cred = new PasswordCredential({ id: email, password: password, name: currentUser.displayName });
+      navigator.credentials.store(cred).catch(function(){});
+    }
+    
+    // Update header with user info
+    updateUserDisplay();
+  } catch(e) {
+    errEl.textContent = 'Connection error. Check internet!';
+    btn.disabled = false;
+    btn.innerHTML = 'Sign In';
+  }
+}
+
+function updateUserDisplay() {
+  var countEl = document.getElementById('record-count');
+  if (countEl && currentUser) {
+    countEl.textContent = (countEl.textContent || '') + ' | ' + currentUser.displayName;
+  }
+}
+
+function handleLogout() {
+  currentUser = null;
+  localStorage.removeItem('gms_user');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').textContent = '';
+  var btn = document.getElementById('login-btn');
+  btn.disabled = false;
+  btn.innerHTML = 'Sign In';
+}
+
+// =============================================
+//  VEHICLE HISTORY TIMELINE
+// =============================================
+function searchVehicleHistory() {
+  var query = document.getElementById('vh-search').value.trim().toUpperCase();
+  if (!query) { showToast('Please enter a vehicle number!', '#f59e0b'); return; }
+  
+  var records = allData.filter(function(r) {
+    return (r.vehicle_number || '').toUpperCase().indexOf(query) !== -1;
+  }).sort(function(a, b) {
+    var ta = a.created_at ? new Date(a.created_at).getTime() : 0;
+    var tb = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return tb - ta;
+  });
+  
+  var resultDiv = document.getElementById('vh-result');
+  
+  if (records.length === 0) {
+    resultDiv.innerHTML = '<div class="card" style="text-align:center;padding:40px;"><p style="color:#94a3b8;font-size:15px;">No records found for "<b>' + esc(query) + '</b>"</p></div>';
+    return;
+  }
+  
+  // Summary stats
+  var totalWeight = records.reduce(function(s, r) { return s + (r.net_weight_kg || 0); }, 0);
+  var totalAmount = records.reduce(function(s, r) { return s + (r.total_amount || 0); }, 0);
+  var totalTrips = records.length;
+  var companies = {};
+  records.forEach(function(r) { companies[r.company_name || 'Unknown'] = (companies[r.company_name || 'Unknown'] || 0) + 1; });
+  
+  var html = '<div class="card mb-4" style="background:linear-gradient(135deg,#1e40af22,#1e3a8a22);border:1px solid #3b82f644;">';
+  html += '<div class="flex items-center gap-3 mb-3"><div style="background:#3b82f633;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="truck" style="width:22px;height:22px;color:#60a5fa;"></i></div>';
+  html += '<div><h3 style="color:#e2e8f0;font-size:18px;margin:0;">' + esc(records[0].vehicle_number) + '</h3>';
+  html += '<p style="color:#94a3b8;font-size:12px;">Found ' + totalTrips + ' transactions</p></div></div>';
+  html += '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">';
+  html += '<div style="text-align:center;padding:10px;background:#0f172a66;border-radius:8px;"><div style="color:#94a3b8;font-size:11px;">Total Trips</div><div style="color:#60a5fa;font-size:22px;font-weight:700;">' + totalTrips + '</div></div>';
+  html += '<div style="text-align:center;padding:10px;background:#0f172a66;border-radius:8px;"><div style="color:#94a3b8;font-size:11px;">Total Weight</div><div style="color:#4ade80;font-size:22px;font-weight:700;">' + totalWeight.toLocaleString() + ' KG</div></div>';
+  html += '<div style="text-align:center;padding:10px;background:#0f172a66;border-radius:8px;"><div style="color:#94a3b8;font-size:11px;">Total Amount</div><div style="color:#fbbf24;font-size:22px;font-weight:700;">&#x09F3;' + totalAmount.toLocaleString() + '</div></div>';
+  html += '<div style="text-align:center;padding:10px;background:#0f172a66;border-radius:8px;"><div style="color:#94a3b8;font-size:11px;">Companies</div><div style="color:#c084fc;font-size:22px;font-weight:700;">' + Object.keys(companies).length + '</div></div>';
+  html += '</div></div>';
+  
+  // Timeline
+  html += '<h3 class="font-semibold mb-3 flex items-center gap-2" style="color:#e2e8f0;"><i data-lucide="git-branch" style="width:18px;height:18px;color:#3b82f6;"></i> Transaction Timeline</h3>';
+  html += '<div style="position:relative;padding-left:28px;">';
+  html += '<div style="position:absolute;left:11px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#3b82f6,#8b5cf6,#f59e0b);border-radius:1px;"></div>';
+  
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var isTextiles = (r.company_name === 'GMS TEXTILES LTD');
+    var dotColor = isTextiles ? '#f59e0b' : '#3b82f6';
+    var bgColor = isTextiles ? '#f59e0b11' : '#3b82f611';
+    var borderColor = isTextiles ? '#f59e0b44' : '#3b82f644';
+    var compLabel = isTextiles ? 'TEXTILES' : 'COMPOSITE';
+    var time = r.created_at ? new Date(r.created_at).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true }) : r.date;
+    var statusColor = r.payment_status === 'Paid' ? '#4ade80' : '#f87171';
+    
+    html += '<div style="position:relative;margin-bottom:16px;">';
+    html += '<div style="position:absolute;left:-22px;top:14px;width:14px;height:14px;border-radius:50%;background:' + dotColor + ';border:3px solid var(--c-surface);box-shadow:0 0 8px ' + dotColor + '66;"></div>';
+    html += '<div class="card" style="background:' + bgColor + ';border:1px solid ' + borderColor + ';padding:14px 16px;margin-left:4px;">';
+    html += '<div class="flex items-center justify-between flex-wrap gap-2 mb-2">';
+    html += '<div class="flex items-center gap-2"><span style="font-size:11px;font-weight:700;color:' + dotColor + ';background:' + dotColor + '20;padding:2px 8px;border-radius:4px;">' + compLabel + '</span>';
+    html += '<span style="font-size:11px;color:#94a3b8;">' + time + '</span></div>';
+    html += '<span style="font-size:11px;font-weight:600;color:' + statusColor + ';background:' + statusColor + '22;padding:2px 8px;border-radius:4px;">' + (r.payment_status || 'Unpaid') + '</span>';
+    html += '</div>';
+    html += '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">';
+    html += '<div><span style="color:#94a3b8;">Department:</span> <span style="color:#e2e8f0;font-weight:600;">' + esc(r.loader_name) + '</span></div>';
+    html += '<div><span style="color:#94a3b8;">Type:</span> <span style="color:#e2e8f0;">' + esc(r.work_type) + '</span></div>';
+    html += '<div><span style="color:#94a3b8;">Weight:</span> <span style="color:#e2e8f0;">' + (r.net_weight_kg||0) + ' KG</span></div>';
+    html += '<div><span style="color:#94a3b8;">Amount:</span> <span style="color:#4ade80;font-weight:700;">&#x09F3;' + (r.total_amount||0).toLocaleString() + '</span></div>';
+    html += '</div>';
+    if (r.vehicle_from && r.vehicle_to) {
+      html += '<div style="font-size:11px;color:#64748b;margin-top:6px;">Route: ' + esc(r.vehicle_from) + ' → ' + esc(r.vehicle_to) + '</div>';
+    }
+    html += '</div></div>';
+  }
+  
+  html += '</div>';
+  resultDiv.innerHTML = html;
+  lucide.createIcons();
+}
+
+function clearVehicleSearch() {
+  document.getElementById('vh-search').value = '';
+  document.getElementById('vh-result').innerHTML = '';
+}
   </script>
  </body>
 </html>
