@@ -901,6 +901,21 @@ function computeDataHash() {
   return allData.length + '|' + parts.join('|');
 }
 
+function getCompanyInfo(companyFilter) {
+  if (companyFilter === 'GMS TEXTILES LTD') {
+    return { name: 'GMS TEXTILES LTD', address: 'Tansutrapur, Kaliakoir, Gazipur' };
+  }
+  if (companyFilter === 'GMS COMPOSITE KNITTING IND LTD') {
+    return { name: 'GMS COMPOSITE KNITTING IND. LTD.', address: 'Sardagonj, Kashimpur, Gazipur' };
+  }
+  return { name: 'GMS COMPOSITE & GMS TEXTILES', address: 'Sardagonj, Kashimpur, Gazipur & Tansutrapur, Kaliakoir, Gazipur' };
+}
+
+function getCompanyHeaderHTML(companyFilter) {
+  var info = getCompanyInfo(companyFilter);
+  return '<h1>' + info.name + '</h1><p>' + info.address + '</p>';
+}
+
 function getActiveTabId() {
   var tabs = ['dashboard', 'entry', 'records', 'payments', 'reports', 'dept-summary', 'vehicle-history'];
   for (var i = 0; i < tabs.length; i++) {
@@ -1472,7 +1487,7 @@ function exportToExcel() {
   html += '.sig-label { font-size: 10px; font-weight: bold; color: #333; text-align: center; }';
   html += '</style></head><body>';
 
-  html += '<table><tr><td colspan="15" class="header" style="border:none;"><h1>GMS COMPOSITE KNITTING IND. LTD.</h1><p>Sardagonj, Kashimpur, Gazipur</p><p style="border-top:3px solid #000;margin-top:5px;padding-top:5px;"><b>Contract Loader Transaction Report</b></p></td></tr></table>';
+  html += '<table><tr><td colspan="15" class="header" style="border:none;">' + getCompanyHeaderHTML(companyFilter) + '<p style="border-top:3px solid #000;margin-top:5px;padding-top:5px;"><b>Contract Loader Transaction Report</b></p></td></tr></table>';
   html += '<table class="info-table" style="width:50%;margin-bottom:12px;"><tbody>';
   html += '<tr><th style="background:#e8edf2;">Period</th><td>' + (from || 'All') + ' to ' + (to || 'All') + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Department</th><td>' + deptLabel + '</td></tr>';
@@ -1551,7 +1566,7 @@ function exportSummaryExcel() {
   html += '.summary-section th { background: #e8edf2; } .sig-section td { border: none; padding: 8px; } .sig-box { height: 50px; border-bottom: 1px dashed #000; margin-bottom: 4px; } .sig-label { font-size: 10px; font-weight: bold; color: #333; text-align: center; }';
   html += '</style></head><body>';
 
-  html += '<table><tr><td colspan="12" class="header" style="border:none;"><h1>GMS COMPOSITE KNITTING IND. LTD.</h1><p>Sardagonj, Kashimpur, Gazipur</p><p style="border-top:3px solid #000;margin-top:5px;padding-top:5px;"><b>Contract Loader Transaction Summary Report</b></p></td></tr></table>';
+  html += '<table><tr><td colspan="12" class="header" style="border:none;">' + getCompanyHeaderHTML(companyFilter) + '<p style="border-top:3px solid #000;margin-top:5px;padding-top:5px;"><b>Contract Loader Transaction Summary Report</b></p></td></tr></table>';
   html += '<table class="info-table" style="width:50%;margin-bottom:12px;"><tbody>';
   html += '<tr><th style="background:#e8edf2;">Period</th><td>' + (from || 'All') + ' to ' + (to || 'All') + (monthLabel ? ' (' + monthLabel + ')' : '') + '</td></tr>';
   html += '<tr><th style="background:#e8edf2;">Department</th><td>' + deptLabel + '</td></tr>';
@@ -1641,7 +1656,7 @@ function printReport() {
     rowsHtml += '<tr><td style="text-align:center;">' + (j+1) + '</td><td>' + r.date + '</td><td>' + esc(r.company_name || '-') + '</td><td>' + esc(r.vehicle_number) + '</td><td>' + esc(r.challan_number) + '</td><td>' + esc(r.vehicle_from) + '</td><td>' + esc(r.vehicle_to) + '</td><td>' + esc(r.loader_name) + '</td><td>' + esc(r.work_type) + '</td><td style="text-align:right;">' + (r.net_weight_kg||0).toLocaleString() + '</td><td style="text-align:right;">' + (r.receive_qty_kg||0).toLocaleString() + '</td><td style="text-align:right;">' + (r.delivery_qty_kg||0).toLocaleString() + '</td><td>' + esc(r.remarks||'') + '</td></tr>';
   }
 
-  var printHtml = '<div class="pp-company-header"><h1>GMS COMPOSITE KNITTING IND. LTD.</h1><p>Sardagonj, Kashimpur, Gazipur</p></div>';
+  var printHtml = '<div class="pp-company-header">' + getCompanyHeaderHTML(companyFilter) + '</div>';
   printHtml += '<div class="pp-report-title">Contract Loader Transaction Details - ' + monthLabel + ' (' + deptLabel + ')</div>';
   printHtml += '<table class="pp-table"><thead><tr><th>SL</th><th>Date</th><th>Company</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Dept</th><th>Type</th><th>Weight(KG)</th><th>Receive(KG)</th><th>Delivery(KG)</th><th>Remarks</th></tr></thead><tbody>';
   printHtml += rowsHtml;
@@ -1715,6 +1730,7 @@ function generateShareableHTML() {
   var from = document.getElementById('report-from').value;
   var to = document.getElementById('report-to').value;
   var dept = document.getElementById('report-dept').value || 'All';
+  var companyFilter = document.getElementById('report-company').value;
   var totalAmount = 0, totalPaid = 0, totalUnpaid = 0;
   for (var i = 0; i < reportData.length; i++) {
     totalAmount += reportData[i].total_amount || 0;
@@ -1722,7 +1738,7 @@ function generateShareableHTML() {
     else totalUnpaid += reportData[i].total_amount || 0;
   }
   var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MCD Report</title><style>body{font-family:Calibri,Arial,sans-serif;padding:20px;background:#f5f5f5;}table{width:100%;border-collapse:collapse;margin:15px 0;}th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:13px;}th{background:#1e3c72;color:#fff;}.h{text-align:center;border:none;padding:10px;}.h h1{margin:0;font-size:22px;}.h p{margin:2px 0;color:#666;}.badge-paid{color:#16a34a;font-weight:bold;}.badge-unpaid{color:#dc2626;font-weight:bold;}</style></head><body>';
-  html += '<div class="h"><h1>GMS COMPOSITE KNITTING IND. LTD.</h1><p>Sardagonj, Kashimpur, Gazipur</p><p><b>MCD Subcontract Load Report</b></p></div>';
+  html += '<div class="h">' + getCompanyHeaderHTML(companyFilter) + '<p><b>MCD Subcontract Load Report</b></p></div>';
   html += '<p><b>Period:</b> ' + (from||'All') + ' to ' + (to||'All') + ' | <b>Department:</b> ' + dept + ' | <b>Entries:</b> ' + reportData.length + ' | <b>Total:</b> ' + totalAmount.toLocaleString() + ' | <b>Paid:</b> ' + totalPaid.toLocaleString() + ' | <b>Due:</b> ' + totalUnpaid.toLocaleString() + '</p>';
   html += '<table><thead><tr><th>SL</th><th>Date</th><th>Vehicle</th><th>Challan</th><th>From</th><th>To</th><th>Dept</th><th>Type</th><th>Weight</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
   for (var j = 0; j < reportData.length; j++) {
@@ -2146,7 +2162,13 @@ function generateDeptSummary() {
   // Build per-department breakdown for the summary table
   var deptBreakdown = [];
   var allDepts = ['Yarn MCD', 'Yarn Dyeing MCD', 'Grey Fabric MCD', 'Finish Fabric MCD', 'Chemical MCD', 'Commercial Shipment'];
-  var grandScaleWeight = 0, grandAmount = 0;
+  // Use 'filtered' data (respects ALL filters including department) for grand total
+  var grandScaleWeight = filtered.reduce(function(s, r) {
+    if (r.work_type === 'Loading') return s + (r.delivery_qty_kg || 0);
+    if (r.work_type === 'Unloading') return s + (r.receive_qty_kg || 0);
+    return s;
+  }, 0);
+  var grandAmount = filtered.reduce(function(s, r) { return s + (r.total_amount || 0); }, 0);
   for (var di = 0; di < allDepts.length; di++) {
     var dName = allDepts[di];
     var dRecs = dateFiltered.filter(function(r) { return r.loader_name === dName; });
@@ -2155,8 +2177,6 @@ function generateDeptSummary() {
     var dUnloading = dRecs.filter(function(r) { return r.work_type === 'Unloading'; });
     var dScale = dLoading.reduce(function(s, r) { return s + (r.delivery_qty_kg || 0); }, 0) + dUnloading.reduce(function(s, r) { return s + (r.receive_qty_kg || 0); }, 0);
     var dAmount = dRecs.reduce(function(s, r) { return s + (r.total_amount || 0); }, 0);
-    grandScaleWeight += dScale;
-    grandAmount += dAmount;
     deptBreakdown.push({ name: dName, scaleWeight: dScale, amount: dAmount, count: dRecs.length });
   }
 
@@ -2193,7 +2213,7 @@ function generateDeptSummary() {
   }
 
   deptSummaryData = {
-    dept: dept, deptLabel: isAllDept ? 'All Department' : dept, fromDate: fromDate, toDate: toDate, combine: combine,
+    dept: dept, deptLabel: isAllDept ? 'All Department' : dept, fromDate: fromDate, toDate: toDate, combine: combine, companyFilter: company,
     totalLoadingWeight: totalLoadingWeight,
     totalUnloadingWeight: totalUnloadingWeight,
     totalReceiveQty: totalReceiveQty,
@@ -2548,7 +2568,7 @@ function printDeptSummary() {
   pw.document.write('</style></head><body>');
 
   // Header
-  pw.document.write('<div class="header"><h1>GMS COMPOSITE & GMS TEXTILES</h1><p>GMS MCD Vehicle Tracker</p></div>');
+  pw.document.write('<div class="header">' + getCompanyHeaderHTML(data.companyFilter || '') + '</div>');
   pw.document.write('<div class="report-title">Department Summary: ' + data.deptLabel + '</div>');
   pw.document.write('<div class="meta">Date Range: ' + dateRange + ' | Total Entries: ' + data.totalCount + '</div>');
 
