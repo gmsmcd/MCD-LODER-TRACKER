@@ -1599,22 +1599,26 @@ function updateEditToOptionsForFrom() {
   if (!fromInput || !toInput) return;
   var fromVal = fromInput.value.trim();
 
+  // Always populate the From suggestions with all known From values + GMS companies
+  var froms = uniqueSorted(allData, 'vehicle_from');
+  for (var i = 0; i < GMS_COMPANIES.length; i++) {
+    if (froms.indexOf(GMS_COMPANIES[i]) === -1) froms.unshift(GMS_COMPANIES[i]);
+  }
+  fillDatalist('dl-edit-from', froms);
+
+  // Populate the To datalist based on From value.
+  // IMPORTANT: we do NOT clear the existing To value here. The user may be editing
+  // a record that was saved before this restriction was added, or simply hasn't
+  // picked a new To yet. Save-time validation enforces the rule.
   if (fromVal && !isGmsCompany(fromVal)) {
-    // Need a datalist for the edit-to field if not present
-    ensureEditToDatalist();
-    toInput.setAttribute('list', 'dl-edit-to');
+    // From is an EXTERNAL company -> To dropdown shows only GMS companies
     fillDatalist('dl-edit-to', GMS_COMPANIES);
     if (hint) hint.classList.remove('hidden');
-    if (toInput.value && !isGmsCompany(toInput.value)) {
-      toInput.value = '';
-    }
   } else {
-    // Restore the full location list
-    ensureEditToDatalist();
-    toInput.setAttribute('list', 'dl-edit-to');
+    // From is empty OR is one of our GMS companies -> To dropdown is unrestricted
     var tos = uniqueSorted(allData, 'vehicle_to');
-    for (var i = 0; i < GMS_COMPANIES.length; i++) {
-      if (tos.indexOf(GMS_COMPANIES[i]) === -1) tos.unshift(GMS_COMPANIES[i]);
+    for (var j = 0; j < GMS_COMPANIES.length; j++) {
+      if (tos.indexOf(GMS_COMPANIES[j]) === -1) tos.unshift(GMS_COMPANIES[j]);
     }
     fillDatalist('dl-edit-to', tos);
     if (hint) hint.classList.add('hidden');
@@ -2545,22 +2549,31 @@ function editRecord(id) {
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Serial No</label><input type="text" id="edit-serial" value="' + esc(rec.serial_no) + '" readonly style="opacity:.6;"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle Number</label><input type="text" id="edit-vehicle" value="' + esc(rec.vehicle_number) + '"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan No</label><input type="text" id="edit-challan" value="' + esc(rec.challan_number) + '"></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From</label><input type="text" id="edit-from" value="' + esc(rec.vehicle_from) + '" oninput="updateEditToOptionsForFrom()"></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To</label><input type="text" id="edit-to" value="' + esc(rec.vehicle_to) + '"><p id="edit-to-hint" class="text-xs hidden" style="color:#fbbf24;margin-top:4px;line-height:1.4;"><i data-lucide="info" style="width:12px;height:12px;display:inline;vertical-align:middle;"></i> From বাইরের কোম্পানি — তাই To-তে শুধু <b>GMS COMPOSITE KNITTING IND LTD</b> অথবা <b>GMS TEXTILES LTD</b> সিলেক্ট করুন।</p></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From</label><input type="text" id="edit-from" list="dl-edit-from" oninput="updateEditToOptionsForFrom()"><datalist id="dl-edit-from"></datalist></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To</label><input type="text" id="edit-to" list="dl-edit-to"><datalist id="dl-edit-to"></datalist><p id="edit-to-hint" class="text-xs hidden" style="color:#fbbf24;margin-top:4px;line-height:1.4;"><i data-lucide="info" style="width:12px;height:12px;display:inline;vertical-align:middle;"></i> From বাইরের কোম্পানি — তাই To-তে শুধু <b>GMS COMPOSITE KNITTING IND LTD</b> অথবা <b>GMS TEXTILES LTD</b> সিলেক্ট করুন।</p></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label><select id="edit-loader" onchange="autoSetEditRate()"><option value="Yarn MCD"' + (rec.loader_name==='Yarn MCD'?' selected':'') + '>Yarn MCD</option><option value="Yarn Dyeing MCD"' + (rec.loader_name==='Yarn Dyeing MCD'?' selected':'') + '>Yarn Dyeing MCD</option><option value="Grey Fabric MCD"' + (rec.loader_name==='Grey Fabric MCD'?' selected':'') + '>Grey Fabric MCD</option><option value="Finish Fabric MCD"' + (rec.loader_name==='Finish Fabric MCD'?' selected':'') + '>Finish Fabric MCD</option><option value="Chemical MCD"' + (rec.loader_name==='Chemical MCD'?' selected':'') + '>Chemical MCD</option><option value="Commercial Shipment"' + (rec.loader_name==='Commercial Shipment'?' selected':'') + '>Commercial Shipment</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Work Type</label><select id="edit-worktype" onchange="updateEditFields()"><option value="Loading"' + (rec.work_type==='Loading'?' selected':'') + '>Loading</option><option value="Unloading"' + (rec.work_type==='Unloading'?' selected':'') + '>Unloading</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Net Weight (KG)</label><input type="number" step="0.01" id="edit-netweight" value="' + rec.net_weight_kg + '"></div>';
   html += '<div id="edit-receive-field"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Receive Qty (KG - Scale Weight)</label><input type="number" step="0.01" id="edit-receiveqty" value="' + (rec.receive_qty_kg||0) + '" oninput="calcEditTotal()"></div>';
   html += '<div id="edit-delivery-field" class="hidden"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Delivery Qty (KG - Scale Weight)</label><input type="number" step="0.01" id="edit-deliveryqty" value="' + (rec.delivery_qty_kg||0) + '" oninput="calcEditTotal()"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Rate Per Ton</label><input type="number" step="0.01" id="edit-rate" value="' + rec.rate_per_ton + '" oninput="calcEditTotal()"></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Total Amount (Live)</label><input type="text" id="edit-total" readonly value="\u09F3' + (rec.total_amount||0).toLocaleString() + '" style="font-weight:700;color:#4ade80 !important;"></div';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Total Amount (Live)</label><input type="text" id="edit-total" readonly value="\u09F3' + (rec.total_amount||0).toLocaleString() + '" style="font-weight:700;color:#4ade80 !important;"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Remarks</label><input type="text" id="edit-remarks" value="' + esc(rec.remarks || '') + '"></div>';
   html += '</div>';
   container.innerHTML = html;
   document.getElementById('edit-modal').classList.remove('hidden');
   document.getElementById('edit-modal').dataset.recordId = id;
+
+  // Set From / To values directly via JS to avoid any HTML attribute parsing issues.
+  // This guarantees the saved values are visible when the modal opens.
+  var fromEl = document.getElementById('edit-from');
+  var toEl = document.getElementById('edit-to');
+  if (fromEl) fromEl.value = rec.vehicle_from || '';
+  if (toEl)   toEl.value   = rec.vehicle_to   || '';
+
   updateEditFields();
-  // Apply From->To restriction based on the loaded From value
+  // Apply From->To restriction based on the loaded From value.
+  // (does NOT clear existing To value — only saves-time validation enforces the rule)
   updateEditToOptionsForFrom();
   lucide.createIcons();
 }
