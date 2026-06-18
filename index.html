@@ -853,17 +853,13 @@
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan Number *</label><input type="text" id="f-challan" list="dl-challan" required placeholder="Challan No"><datalist id="dl-challan"></datalist></div>
         <div>
           <label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle From *</label>
-          <input type="text" id="f-from" list="dl-from" required placeholder="Origin location / company name" oninput="updateToOptionsForFrom()">
+          <input type="text" id="f-from" list="dl-from" required placeholder="Origin location / company name">
           <datalist id="dl-from"></datalist>
         </div>
         <div>
           <label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle To *</label>
           <input type="text" id="f-to" list="dl-to" required placeholder="Destination">
           <datalist id="dl-to"></datalist>
-          <p id="f-to-hint" class="text-xs hidden" style="color:#fbbf24;margin-top:4px;line-height:1.4;">
-            <i data-lucide="info" style="width:12px;height:12px;display:inline;vertical-align:middle;"></i>
-            From বাইরের কোম্পানি — তাই To-তে শুধু <b>GMS COMPOSITE KNITTING IND LTD</b> অথবা <b>GMS TEXTILES LTD</b> সিলেক্ট করুন।
-          </p>
         </div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department Name *</label>
          <select id="f-loader" required onchange="autoSetRate()">
@@ -1563,76 +1559,24 @@ function isGmsCompany(name) {
   return GMS_COMPANIES.some(function(c) { return c.toUpperCase() === n; });
 }
 
-// Entry form: update To options based on From value
-function updateToOptionsForFrom() {
-  var fromVal = document.getElementById('f-from').value.trim();
-  var toInput = document.getElementById('f-to');
-  var hint = document.getElementById('f-to-hint');
-  if (!toInput) return;
-
-  if (fromVal && !isGmsCompany(fromVal)) {
-    // From is an EXTERNAL company -> To MUST be one of our GMS companies
-    fillDatalist('dl-to', GMS_COMPANIES);
-    if (hint) hint.classList.remove('hidden');
-    // Clear current To value if it isn't a GMS company
-    if (toInput.value && !isGmsCompany(toInput.value)) {
-      toInput.value = '';
-    }
-  } else {
-    // From is empty OR is one of our GMS companies -> To is unrestricted
-    var tos = uniqueSorted(allData, 'vehicle_to');
-    // Make sure GMS companies are always available as suggestions
-    for (var i = 0; i < GMS_COMPANIES.length; i++) {
-      if (tos.indexOf(GMS_COMPANIES[i]) === -1) tos.unshift(GMS_COMPANIES[i]);
-    }
-    fillDatalist('dl-to', tos);
-    if (hint) hint.classList.add('hidden');
-  }
-  if (window.lucide) lucide.createIcons();
-}
-
-// Edit modal: update To options based on From value
-function updateEditToOptionsForFrom() {
-  var fromInput = document.getElementById('edit-from');
-  var toInput = document.getElementById('edit-to');
-  var hint = document.getElementById('edit-to-hint');
-  if (!fromInput || !toInput) return;
-  var fromVal = fromInput.value.trim();
-
-  // Always populate the From suggestions with all known From values + GMS companies
+// =============================================
+//  EDIT MODAL DATALISTS — populate From/To suggestions.
+//  No validation: user can pick any company in either field.
+// =============================================
+function populateEditDatalists() {
+  // From suggestions: all known From values + our GMS companies
   var froms = uniqueSorted(allData, 'vehicle_from');
   for (var i = 0; i < GMS_COMPANIES.length; i++) {
     if (froms.indexOf(GMS_COMPANIES[i]) === -1) froms.unshift(GMS_COMPANIES[i]);
   }
   fillDatalist('dl-edit-from', froms);
 
-  // Populate the To datalist based on From value.
-  // IMPORTANT: we do NOT clear the existing To value here. The user may be editing
-  // a record that was saved before this restriction was added, or simply hasn't
-  // picked a new To yet. Save-time validation enforces the rule.
-  if (fromVal && !isGmsCompany(fromVal)) {
-    // From is an EXTERNAL company -> To dropdown shows only GMS companies
-    fillDatalist('dl-edit-to', GMS_COMPANIES);
-    if (hint) hint.classList.remove('hidden');
-  } else {
-    // From is empty OR is one of our GMS companies -> To dropdown is unrestricted
-    var tos = uniqueSorted(allData, 'vehicle_to');
-    for (var j = 0; j < GMS_COMPANIES.length; j++) {
-      if (tos.indexOf(GMS_COMPANIES[j]) === -1) tos.unshift(GMS_COMPANIES[j]);
-    }
-    fillDatalist('dl-edit-to', tos);
-    if (hint) hint.classList.add('hidden');
+  // To suggestions: all known To values + our GMS companies
+  var tos = uniqueSorted(allData, 'vehicle_to');
+  for (var j = 0; j < GMS_COMPANIES.length; j++) {
+    if (tos.indexOf(GMS_COMPANIES[j]) === -1) tos.unshift(GMS_COMPANIES[j]);
   }
-  if (window.lucide) lucide.createIcons();
-}
-
-// Lazily create the datalist element used by the edit modal's To field
-function ensureEditToDatalist() {
-  if (!document.getElementById('dl-edit-to')) {
-    var dl = document.createElement('datalist');
-    dl.id = 'dl-edit-to';
-    document.body.appendChild(dl);
-  }
+  fillDatalist('dl-edit-to', tos);
 }
 
 function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -1830,14 +1774,6 @@ async function handleSubmit(e) {
     var scaleQty = (workType === 'Loading') ? deliveryQty : receiveQty;
     var total = ((scaleQty / 1000) * rate).toFixed(2);
     var remarks = document.getElementById('f-remarks').value.trim();
-
-    // From -> To restriction: if From is an external company, To MUST be a GMS company
-    if (from && !isGmsCompany(from) && !isGmsCompany(to)) {
-      showToast('From বাইরের কোম্পানি — তাই To অবশ্যই GMS COMPOSITE KNITTING IND LTD অথবা GMS TEXTILES LTD হতে হবে।', '#ef4444');
-      btn.disabled = false;
-      loading.classList.add('hidden');
-      return;
-    }
 
     // Generate UNIQUE serial with timestamp — guaranteed no duplicate
     var serial = generateUniqueSerial();
@@ -2549,8 +2485,8 @@ function editRecord(id) {
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Serial No</label><input type="text" id="edit-serial" value="' + esc(rec.serial_no) + '" readonly style="opacity:.6;"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle Number</label><input type="text" id="edit-vehicle" value="' + esc(rec.vehicle_number) + '"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan No</label><input type="text" id="edit-challan" value="' + esc(rec.challan_number) + '"></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From</label><input type="text" id="edit-from" list="dl-edit-from" oninput="updateEditToOptionsForFrom()"><datalist id="dl-edit-from"></datalist></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To</label><input type="text" id="edit-to" list="dl-edit-to"><datalist id="dl-edit-to"></datalist><p id="edit-to-hint" class="text-xs hidden" style="color:#fbbf24;margin-top:4px;line-height:1.4;"><i data-lucide="info" style="width:12px;height:12px;display:inline;vertical-align:middle;"></i> From বাইরের কোম্পানি — তাই To-তে শুধু <b>GMS COMPOSITE KNITTING IND LTD</b> অথবা <b>GMS TEXTILES LTD</b> সিলেক্ট করুন।</p></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From</label><input type="text" id="edit-from" list="dl-edit-from"><datalist id="dl-edit-from"></datalist></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To</label><input type="text" id="edit-to" list="dl-edit-to"><datalist id="dl-edit-to"></datalist></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label><select id="edit-loader" onchange="autoSetEditRate()"><option value="Yarn MCD"' + (rec.loader_name==='Yarn MCD'?' selected':'') + '>Yarn MCD</option><option value="Yarn Dyeing MCD"' + (rec.loader_name==='Yarn Dyeing MCD'?' selected':'') + '>Yarn Dyeing MCD</option><option value="Grey Fabric MCD"' + (rec.loader_name==='Grey Fabric MCD'?' selected':'') + '>Grey Fabric MCD</option><option value="Finish Fabric MCD"' + (rec.loader_name==='Finish Fabric MCD'?' selected':'') + '>Finish Fabric MCD</option><option value="Chemical MCD"' + (rec.loader_name==='Chemical MCD'?' selected':'') + '>Chemical MCD</option><option value="Commercial Shipment"' + (rec.loader_name==='Commercial Shipment'?' selected':'') + '>Commercial Shipment</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Work Type</label><select id="edit-worktype" onchange="updateEditFields()"><option value="Loading"' + (rec.work_type==='Loading'?' selected':'') + '>Loading</option><option value="Unloading"' + (rec.work_type==='Unloading'?' selected':'') + '>Unloading</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Net Weight (KG)</label><input type="number" step="0.01" id="edit-netweight" value="' + rec.net_weight_kg + '"></div>';
@@ -2572,9 +2508,8 @@ function editRecord(id) {
   if (toEl)   toEl.value   = rec.vehicle_to   || '';
 
   updateEditFields();
-  // Apply From->To restriction based on the loaded From value.
-  // (does NOT clear existing To value — only saves-time validation enforces the rule)
-  updateEditToOptionsForFrom();
+  // Populate From/To datalists (no restriction — user can pick any company)
+  populateEditDatalists();
   lucide.createIcons();
 }
 
@@ -2612,14 +2547,6 @@ async function saveEditRecord() {
   var id = document.getElementById('edit-modal').dataset.recordId;
   var rec = allData.find(function(r) { return r.__backendId === id; });
   if (!rec) return;
-
-  // From -> To restriction: if From is an external company, To MUST be a GMS company
-  var editFrom = document.getElementById('edit-from').value.trim();
-  var editTo = document.getElementById('edit-to').value.trim();
-  if (editFrom && !isGmsCompany(editFrom) && !isGmsCompany(editTo)) {
-    showToast('From বাইরের কোম্পানি — তাই To অবশ্যই GMS COMPOSITE KNITTING IND LTD অথবা GMS TEXTILES LTD হতে হবে।', '#ef4444');
-    return;
-  }
 
   var weight = parseFloat(document.getElementById('edit-netweight').value) || 0;
   var rate = parseFloat(document.getElementById('edit-rate').value) || 0;
