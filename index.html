@@ -278,357 +278,9 @@
     .rank-other { background: #334155; color: #94a3b8; }
     .leaderboard-bar { height: 6px; border-radius: 3px; background: #1e293b; overflow: hidden; }
     .leaderboard-bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
-
-    /* ===== FIFA World Cup 2026 "26" stacked animation (exact replica) ===== */
-    @property --scale {
-      syntax: '<number>';
-      inherits: true;
-      initial-value: .8;
-    }
-
-    .wc26-logo {
-      --char-size: 26px;        /* compact for header */
-      --r: calc(var(--char-size) / 3);
-      --gap: calc(var(--char-size) / 15);
-      --speed: 6s;
-      position: relative;
-      display: grid;
-      grid-template-rows: repeat(2, 1fr);
-      gap: var(--gap);
-      width: calc(var(--r) * 4);
-      height: calc(var(--char-size) * 2 + var(--gap));
-      flex-shrink: 0;
-      overflow: hidden;
-      border-radius: 6px;
-    }
-
-    .wc26-svg-defs { position: absolute; width: 0; height: 0; }
-
-    .wc26-num {
-      display: grid;
-      justify-content: center;
-    }
-    .wc26-two { align-content: end; background: #EA394B; }
-    .wc26-two span { transform-origin: 50% 100%; }
-    .wc26-six { align-content: start; z-index: -1; }
-    .wc26-six span { transform-origin: 50% 0%; }
-
-    .wc26-num span {
-      grid-row: 1;
-      grid-column: 1;
-      position: relative;
-      display: block;
-      width: calc(var(--r) * 4);
-      height: calc(var(--r) * 3);
-    }
-
-    /* explicit indices (replacement for sibling-index() which only works in Chrome Canary) */
-    .wc26-num span:nth-child(1)  { z-index: 30; --idx: 1;  }
-    .wc26-num span:nth-child(2)  { z-index: 29; --idx: 2;  }
-    .wc26-num span:nth-child(3)  { z-index: 28; --idx: 3;  }
-    .wc26-num span:nth-child(4)  { z-index: 27; --idx: 4;  }
-    .wc26-num span:nth-child(5)  { z-index: 26; --idx: 5;  }
-    .wc26-num span:nth-child(6)  { z-index: 25; --idx: 6;  }
-    .wc26-num span:nth-child(7)  { z-index: 24; --idx: 7;  }
-    .wc26-num span:nth-child(8)  { z-index: 23; --idx: 8;  }
-    .wc26-num span:nth-child(9)  { z-index: 22; --idx: 9;  }
-    .wc26-num span:nth-child(10) { z-index: 21; --idx: 10; }
-    .wc26-num span:nth-child(11) { z-index: 20; --idx: 11; }
-    .wc26-num span:nth-child(12) { z-index: 19; --idx: 12; }
-    .wc26-num span:nth-child(13) { z-index: 18; --idx: 13; }
-    .wc26-num span:nth-child(14) { z-index: 17; --idx: 14; }
-    .wc26-num span:nth-child(15) { z-index: 16; --idx: 15; }
-    .wc26-num span:nth-child(16) { z-index: 15; --idx: 16; }
-    .wc26-num span:nth-child(17) { z-index: 14; --idx: 17; }
-    .wc26-num span:nth-child(18) { z-index: 13; --idx: 18; }
-    .wc26-num span:nth-child(19) { z-index: 12; --idx: 19; }
-    .wc26-num span:nth-child(20) { z-index: 11; --idx: 20; }
-    .wc26-num span:nth-child(21) { z-index: 10; --idx: 21; }
-    .wc26-num span:nth-child(22) { z-index: 9;  --idx: 22; }
-    .wc26-num span:nth-child(23) { z-index: 8;  --idx: 23; }
-    .wc26-num span:nth-child(24) { z-index: 7;  --idx: 24; }
-    .wc26-num span:nth-child(25) { z-index: 6;  --idx: 25; }
-    .wc26-num span:nth-child(26) { z-index: 5;  --idx: 26; }
-
-    .wc26-num span:not(:first-child) {
-      scale: calc((var(--idx) - 1) * var(--scale));
-      animation: wc26ScaleIt var(--speed) calc(var(--idx) * -100ms) ease-in-out infinite;
-    }
-
-    /* FIFA WC26 color cycle - exact same palette */
-    .wc26-num span:nth-child(10n + 1)  { color: #F1FE67; }
-    .wc26-num span:nth-child(10n + 2)  { color: #6B1D18; }
-    .wc26-num span:nth-child(10n + 3)  { color: #C3291C; }
-    .wc26-num span:nth-child(10n + 4)  { color: #AC89F7; }
-    .wc26-num span:nth-child(10n + 5)  { color: #374FF5; }
-    .wc26-num span:nth-child(10n + 6)  { color: #EB4F27; }
-    .wc26-num span:nth-child(10n + 7)  { color: #BCE949; }
-    .wc26-num span:nth-child(10n + 8)  { color: #5A0DE0; }
-    .wc26-num span:nth-child(10n + 9)  { color: #91FBDC; }
-    .wc26-num span:nth-child(10n + 10) { color: #1E4B3F; }
-    .wc26-num span:nth-child(1)        { color: #fff; }
-
-    .wc26-num span:before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: currentcolor;
-    }
-
-    .wc26-two span:before {
-      clip-path: url(#wc26-clip-two);
-      -webkit-clip-path: url(#wc26-clip-two);
-    }
-    .wc26-six span:before {
-      clip-path: url(#wc26-clip-six);
-      -webkit-clip-path: url(#wc26-clip-six);
-    }
-
-    /* "TM" badge on first span of 6 — same as FIFA original */
-    .wc26-six span:first-child:after {
-      content: 'TM';
-      position: absolute;
-      bottom: 0;
-      left: 100%;
-      rotate: -90deg;
-      transform-origin: 0 100%;
-      font-size: 8px;
-      font-family: sans-serif;
-      color: #fff;
-      letter-spacing: .5px;
-      white-space: nowrap;
-    }
-
-    .wc26-center-img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 99;
-      display: block;
-      margin: 0;
-      height: calc(var(--char-size) * 1.55);
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-
-    @keyframes wc26ScaleIt {
-      20% { --scale: 2; }
-      40% { --scale: .6; }
-      70% { --scale: 1.4; }
-    }
-
-    /* mobile compact */
-    @media (max-width: 640px) {
-      .wc26-logo { --char-size: 20px; }
-      .wc26-six span:first-child:after { font-size: 6px; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .wc26-num span:not(:first-child) { animation: none; }
-    }
-
-    /* ===== FIFA WC26 Popup Overlay (report loading) ===== */
-    .wc26-popup-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: radial-gradient(circle at 50% 50%, #1C2379 0%, #0b0e3a 75%, #05071f 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 28px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .35s ease, visibility .35s ease;
-    }
-    .wc26-popup-overlay.show {
-      opacity: 1;
-      visibility: visible;
-    }
-    /* popup version: larger char size + glow */
-    .wc26-popup-logo {
-      --char-size: 90px;
-      --r: calc(var(--char-size) / 3);
-      --gap: calc(var(--char-size) / 15);
-      --speed: 6s;
-      position: relative;
-      display: grid;
-      grid-template-rows: repeat(2, 1fr);
-      gap: var(--gap);
-      width: calc(var(--r) * 4);
-      height: calc(var(--char-size) * 2 + var(--gap));
-      filter: drop-shadow(0 25px 60px rgba(234,57,75,.45)) drop-shadow(0 0 80px rgba(28,35,121,.6));
-      animation: wc26PopupFloat 3s ease-in-out infinite;
-    }
-    @keyframes wc26PopupFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-    .wc26-popup-logo .wc26-num span {
-      grid-row: 1;
-      grid-column: 1;
-      position: relative;
-      display: block;
-      width: calc(var(--r) * 4);
-      height: calc(var(--r) * 3);
-    }
-    .wc26-popup-logo .wc26-num span:nth-child(1)  { z-index: 30; --idx: 1;  }
-    .wc26-popup-logo .wc26-num span:nth-child(2)  { z-index: 29; --idx: 2;  }
-    .wc26-popup-logo .wc26-num span:nth-child(3)  { z-index: 28; --idx: 3;  }
-    .wc26-popup-logo .wc26-num span:nth-child(4)  { z-index: 27; --idx: 4;  }
-    .wc26-popup-logo .wc26-num span:nth-child(5)  { z-index: 26; --idx: 5;  }
-    .wc26-popup-logo .wc26-num span:nth-child(6)  { z-index: 25; --idx: 6;  }
-    .wc26-popup-logo .wc26-num span:nth-child(7)  { z-index: 24; --idx: 7;  }
-    .wc26-popup-logo .wc26-num span:nth-child(8)  { z-index: 23; --idx: 8;  }
-    .wc26-popup-logo .wc26-num span:nth-child(9)  { z-index: 22; --idx: 9;  }
-    .wc26-popup-logo .wc26-num span:nth-child(10) { z-index: 21; --idx: 10; }
-    .wc26-popup-logo .wc26-num span:nth-child(11) { z-index: 20; --idx: 11; }
-    .wc26-popup-logo .wc26-num span:nth-child(12) { z-index: 19; --idx: 12; }
-    .wc26-popup-logo .wc26-num span:nth-child(13) { z-index: 18; --idx: 13; }
-    .wc26-popup-logo .wc26-num span:nth-child(14) { z-index: 17; --idx: 14; }
-    .wc26-popup-logo .wc26-num span:nth-child(15) { z-index: 16; --idx: 15; }
-    .wc26-popup-logo .wc26-num span:nth-child(16) { z-index: 15; --idx: 16; }
-    .wc26-popup-logo .wc26-num span:nth-child(17) { z-index: 14; --idx: 17; }
-    .wc26-popup-logo .wc26-num span:nth-child(18) { z-index: 13; --idx: 18; }
-    .wc26-popup-logo .wc26-num span:nth-child(19) { z-index: 12; --idx: 19; }
-    .wc26-popup-logo .wc26-num span:nth-child(20) { z-index: 11; --idx: 20; }
-    .wc26-popup-logo .wc26-num span:nth-child(21) { z-index: 10; --idx: 21; }
-    .wc26-popup-logo .wc26-num span:nth-child(22) { z-index: 9;  --idx: 22; }
-    .wc26-popup-logo .wc26-num span:nth-child(23) { z-index: 8;  --idx: 23; }
-    .wc26-popup-logo .wc26-num span:nth-child(24) { z-index: 7;  --idx: 24; }
-    .wc26-popup-logo .wc26-num span:nth-child(25) { z-index: 6;  --idx: 25; }
-    .wc26-popup-logo .wc26-num span:nth-child(26) { z-index: 5;  --idx: 26; }
-    .wc26-popup-logo .wc26-num span:not(:first-child) {
-      scale: calc((var(--idx) - 1) * var(--scale));
-      animation: wc26ScaleIt var(--speed) calc(var(--idx) * -100ms) ease-in-out infinite;
-    }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 1)  { color: #F1FE67; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 2)  { color: #6B1D18; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 3)  { color: #C3291C; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 4)  { color: #AC89F7; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 5)  { color: #374FF5; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 6)  { color: #EB4F27; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 7)  { color: #BCE949; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 8)  { color: #5A0DE0; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 9)  { color: #91FBDC; }
-    .wc26-popup-logo .wc26-num span:nth-child(10n + 10) { color: #1E4B3F; }
-    .wc26-popup-logo .wc26-num span:nth-child(1)        { color: #fff; }
-    .wc26-popup-logo .wc26-num span:before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: currentcolor;
-    }
-    .wc26-popup-logo .wc26-two span:before { clip-path: url(#wc26-clip-two); -webkit-clip-path: url(#wc26-clip-two); }
-    .wc26-popup-logo .wc26-six span:before { clip-path: url(#wc26-clip-six); -webkit-clip-path: url(#wc26-clip-six); }
-    .wc26-popup-logo .wc26-two { align-content: end; background: #EA394B; }
-    .wc26-popup-logo .wc26-six { align-content: start; z-index: -1; }
-    .wc26-popup-logo .wc26-two span { transform-origin: 50% 100%; }
-    .wc26-popup-logo .wc26-six span { transform-origin: 50% 0%; }
-    .wc26-popup-logo .wc26-six span:first-child:after {
-      content: 'TM';
-      position: absolute;
-      bottom: 0;
-      left: 100%;
-      rotate: -90deg;
-      transform-origin: 0 100%;
-      font-size: 22px;
-      font-family: sans-serif;
-      color: #fff;
-      letter-spacing: 1px;
-      white-space: nowrap;
-    }
-    .wc26-popup-logo .wc26-center-img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 99;
-      display: block;
-      margin: 0;
-      height: calc(var(--char-size) * 1.55);
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-    .wc26-popup-title {
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      font-weight: 800;
-      font-size: 22px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      text-align: center;
-      text-shadow: 0 4px 20px rgba(0,0,0,.5);
-      opacity: .95;
-    }
-    .wc26-popup-subtitle {
-      color: #94a3b8;
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      font-size: 12px;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      text-align: center;
-      margin-top: -18px;
-    }
-    .wc26-popup-progress {
-      width: 200px;
-      height: 3px;
-      background: rgba(255,255,255,.12);
-      border-radius: 99px;
-      overflow: hidden;
-      position: relative;
-    }
-    .wc26-popup-progress:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -40%;
-      width: 40%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, #F1FE67, #EA394B, transparent);
-      border-radius: 99px;
-      animation: wc26Progress 1.4s ease-in-out infinite;
-    }
-    @keyframes wc26Progress {
-      0% { left: -40%; }
-      100% { left: 100%; }
-    }
-    @media (max-width: 640px) {
-      .wc26-popup-logo { --char-size: 60px; }
-      .wc26-popup-logo .wc26-six span:first-child:after { font-size: 14px; }
-      .wc26-popup-title { font-size: 16px; letter-spacing: 2px; }
-      .wc26-popup-subtitle { font-size: 10px; letter-spacing: 3px; }
-    }
     </style>
  </head>
  <body class="h-full" style="background:var(--c-bg);color:var(--c-text);">
-  <!-- FIFA World Cup 2026 Popup Overlay (shown when viewing/filtering reports) -->
-  <div id="wc26-popup" class="wc26-popup-overlay" aria-hidden="true">
-    <div class="wc26-popup-logo">
-      <div class="wc26-num wc26-two">
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span>
-      </div>
-      <div class="wc26-num wc26-six">
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span>
-      </div>
-      <img src="https://www.donotfold.be/data/codepen/wk2026/fifa-world-cup-2026.png" alt="" class="wc26-center-img" />
-    </div>
-    <div style="text-align:center;">
-      <div id="wc26-popup-title" class="wc26-popup-title">Loading Report</div>
-      <div class="wc26-popup-subtitle">FIFA World Cup 2026</div>
-    </div>
-    <div class="wc26-popup-progress"></div>
-  </div>
-
   <!-- Login Screen -->
   <div id="login-screen" class="login-overlay">
    <div class="login-card">
@@ -651,52 +303,7 @@
    <!-- Header -->
    <header class="flex items-center justify-between px-4 py-3" style="background:var(--c-surface);border-bottom:1px solid #334155;">
     <div class="flex items-center gap-3">
-     <!-- FIFA World Cup 2026 "26" stacked animation logo -->
-     <div class="wc26-logo" aria-label="FIFA World Cup 2026">
-       <svg class="wc26-svg-defs" width="0" height="0" aria-hidden="true">
-         <defs>
-           <clipPath id="wc26-clip-two" clipPathUnits="objectBoundingBox">
-             <path d="M 0 0.3333
-                      A 0.25 0.3333 0 0 1 0.25 0
-                      L 0.75 0
-                      A 0.25 0.3333 0 0 1 0.75 0.6667
-                      L 1 0.6667
-                      L 1 1
-                      L 0 1
-                      L 0 0.6667
-                      A 0.25 0.3333 0 0 1 0.25 0.3333
-                      Z" />
-           </clipPath>
-           <clipPath id="wc26-clip-six" clipPathUnits="objectBoundingBox">
-             <path d="M 0 0.3333
-                      A 0.25 0.3333 0 0 1 0.25 0
-                      L 0.75 0
-                      A 0.25 0.3333 0 0 1 1 0.3333
-                      L 0.75 0.3333
-                      A 0.25 0.3333 0 0 1 0.75 1
-                      L 0.25 1
-                      A 0.25 0.3333 0 0 1 0 0.6667
-                      Z" />
-           </clipPath>
-         </defs>
-       </svg>
-       <div class="wc26-num wc26-two">
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span>
-       </div>
-       <div class="wc26-num wc26-six">
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span><span></span><span></span><span></span><span></span>
-         <span></span>
-       </div>
-       <img src="https://www.donotfold.be/data/codepen/wk2026/fifa-world-cup-2026.png" alt="" class="wc26-center-img" />
-     </div>
+     <img src="https://logicsoftbd.com/uploads/topics/17617174971527.png" alt="GMS Logo" style="width:42px;height:42px;border-radius:8px;object-fit:contain;">
      <div>
       <h1 id="header-title" class="text-lg font-bold" style="line-height:1.2;">GMS MCD VEHICLE TRACKER</h1>
       <p id="header-company" class="text-xs" style="color:#94a3b8;">GMS COMPOSITE & GMS TEXTILES</p>
@@ -853,13 +460,14 @@
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan Number *</label><input type="text" id="f-challan" list="dl-challan" required placeholder="Challan No"><datalist id="dl-challan"></datalist></div>
         <div>
           <label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle From *</label>
-          <input type="text" id="f-from" list="dl-from" required placeholder="Origin location / company name">
+          <input type="text" id="f-from" list="dl-from" required placeholder="Origin location / company name" oninput="updateToOptionsForFrom()">
           <datalist id="dl-from"></datalist>
         </div>
         <div>
           <label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle To *</label>
           <input type="text" id="f-to" list="dl-to" required placeholder="Destination">
           <datalist id="dl-to"></datalist>
+
         </div>
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department Name *</label>
          <select id="f-loader" required onchange="autoSetRate()">
@@ -908,7 +516,7 @@
         <select id="filter-worktype" style="max-width:150px;"><option value="">All Types</option><option value="Loading">Loading</option><option value="Unloading">Unloading</option></select>
         <select id="filter-company" style="max-width:180px;"><option value="">All Companies</option><option value="GMS COMPOSITE KNITTING IND LTD">GMS Composite</option><option value="GMS TEXTILES LTD">GMS Textiles</option></select>
         <input type="date" id="filter-date" style="max-width:170px;">
-        <button onclick="showRecordsWithPopup()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
+        <button onclick="renderRecords()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
        </div>
       </div>
       <div id="records-table" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;"><i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Apply filters above and click <b>SHOW</b> to load records.</p></div>
@@ -924,7 +532,7 @@
        <select id="payment-filter" style="max-width:160px;"><option value="">All Status</option><option value="Unpaid">Unpaid</option><option value="Paid">Paid</option></select>
        <select id="payment-company-filter" style="max-width:180px;"><option value="">All Companies</option><option value="GMS COMPOSITE KNITTING IND LTD">GMS Composite</option><option value="GMS TEXTILES LTD">GMS Textiles</option></select>
        <input type="text" id="payment-search" placeholder="Search loader..." style="max-width:200px;">
-       <button onclick="showPaymentsWithPopup()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
+       <button onclick="renderPayments()" class="btn-primary flex items-center gap-2" style="padding:8px 20px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
       </div>
       <div id="payments-table" class="overflow-x-auto"><p class="text-sm" style="color:#94a3b8;"><i data-lucide="info" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Apply filters above and click <b>SHOW</b> to load payments.</p></div>
      </div>
@@ -959,7 +567,7 @@
         <div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To Date (Optional)</label><input type="date" id="ds-to"></div>
        </div>
        <div class="flex flex-wrap items-center gap-3">
-        <button onclick="showDeptSummaryWithPopup()" class="btn-primary flex items-center gap-2" style="padding:9px 18px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> Generate</button>
+        <button onclick="generateDeptSummary()" class="btn-primary flex items-center gap-2" style="padding:9px 18px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> Generate</button>
         <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold" style="color:#94a3b8;">
          <input type="checkbox" id="ds-combine" onchange="refreshDeptSummary()" style="width:18px;height:18px;cursor:pointer;">
          Combine Receive + Delivery
@@ -1009,7 +617,7 @@
         </div>
        </div>
        <div class="flex flex-wrap gap-2">
-        <button onclick="showReportWithPopup()" class="btn-primary flex items-center gap-2" style="padding:9px 18px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
+        <button onclick="generateReport()" class="btn-primary flex items-center gap-2" style="padding:9px 18px;"><i data-lucide="eye" style="width:16px;height:16px;"></i> SHOW</button>
         <button onclick="exportSummaryExcel()" id="summary-btn" class="btn-summary flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="file-spreadsheet" style="width:16px;height:16px;"></i> Summary Excel</button>
         <button onclick="printReport()" id="print-btn" class="btn-print flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="printer" style="width:16px;height:16px;"></i> Print</button>
         <button onclick="exportToExcel()" id="export-btn" class="btn-secondary flex items-center gap-2 hidden" style="padding:9px 18px;"><i data-lucide="download" style="width:16px;height:16px;"></i> Excel</button>
@@ -1559,24 +1167,41 @@ function isGmsCompany(name) {
   return GMS_COMPANIES.some(function(c) { return c.toUpperCase() === n; });
 }
 
-// =============================================
-//  EDIT MODAL DATALISTS — populate From/To suggestions.
-//  No validation: user can pick any company in either field.
-// =============================================
-function populateEditDatalists() {
-  // From suggestions: all known From values + our GMS companies
-  var froms = uniqueSorted(allData, 'vehicle_from');
-  for (var i = 0; i < GMS_COMPANIES.length; i++) {
-    if (froms.indexOf(GMS_COMPANIES[i]) === -1) froms.unshift(GMS_COMPANIES[i]);
-  }
-  fillDatalist('dl-edit-from', froms);
-
-  // To suggestions: all known To values + our GMS companies
+// Entry form: populate To datalist with all known destinations (no filtering, no validation)
+function updateToOptionsForFrom() {
+  var toInput = document.getElementById('f-to');
+  if (!toInput) return;
+  // Always show every known destination plus the two GMS companies as suggestions
   var tos = uniqueSorted(allData, 'vehicle_to');
-  for (var j = 0; j < GMS_COMPANIES.length; j++) {
-    if (tos.indexOf(GMS_COMPANIES[j]) === -1) tos.unshift(GMS_COMPANIES[j]);
+  for (var i = 0; i < GMS_COMPANIES.length; i++) {
+    if (tos.indexOf(GMS_COMPANIES[i]) === -1) tos.unshift(GMS_COMPANIES[i]);
+  }
+  fillDatalist('dl-to', tos);
+  if (window.lucide) lucide.createIcons();
+}
+
+// Edit modal: populate To datalist with all known destinations (no filtering, no validation)
+function updateEditToOptionsForFrom() {
+  var toInput = document.getElementById('edit-to');
+  if (!toInput) return;
+  ensureEditToDatalist();
+  toInput.setAttribute('list', 'dl-edit-to');
+  // Always show every known destination plus the two GMS companies as suggestions
+  var tos = uniqueSorted(allData, 'vehicle_to');
+  for (var i = 0; i < GMS_COMPANIES.length; i++) {
+    if (tos.indexOf(GMS_COMPANIES[i]) === -1) tos.unshift(GMS_COMPANIES[i]);
   }
   fillDatalist('dl-edit-to', tos);
+  if (window.lucide) lucide.createIcons();
+}
+
+// Lazily create the datalist element used by the edit modal's To field
+function ensureEditToDatalist() {
+  if (!document.getElementById('dl-edit-to')) {
+    var dl = document.createElement('datalist');
+    dl.id = 'dl-edit-to';
+    document.body.appendChild(dl);
+  }
 }
 
 function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -1836,40 +1461,6 @@ function resetForm() {
   document.getElementById('receive-field').classList.add('hidden');
   document.getElementById('delivery-field').classList.add('hidden');
 }
-
-// =============================================
-//  FIFA World Cup 2026 Popup (report loading)
-// =============================================
-var wc26PopupTimer = null;
-function showWc26Popup(title) {
-  var popup = document.getElementById('wc26-popup');
-  if (!popup) return;
-  var titleEl = document.getElementById('wc26-popup-title');
-  if (titleEl && title) titleEl.textContent = title;
-  popup.classList.add('show');
-  popup.setAttribute('aria-hidden', 'false');
-}
-function hideWc26Popup() {
-  var popup = document.getElementById('wc26-popup');
-  if (!popup) return;
-  popup.classList.remove('show');
-  popup.setAttribute('aria-hidden', 'true');
-  if (wc26PopupTimer) { clearTimeout(wc26PopupTimer); wc26PopupTimer = null; }
-}
-// Wrap a report function with FIFA popup: show popup, run fn after short delay, hide popup
-function withWc26Popup(fn, title, delay) {
-  delay = delay || 1200;
-  showWc26Popup(title || 'Loading Report');
-  if (wc26PopupTimer) clearTimeout(wc26PopupTimer);
-  wc26PopupTimer = setTimeout(function() {
-    try { fn && fn(); } finally { hideWc26Popup(); }
-  }, delay);
-}
-// onclick wrappers for the 4 report/show buttons
-function showRecordsWithPopup() { withWc26Popup(renderRecords, 'Loading Records'); }
-function showPaymentsWithPopup() { withWc26Popup(renderPayments, 'Loading Payments'); }
-function showReportWithPopup() { withWc26Popup(generateReport, 'Generating Report'); }
-function showDeptSummaryWithPopup() { withWc26Popup(generateDeptSummary, 'Generating Summary'); }
 
 // =============================================
 //  RECORDS
@@ -2485,31 +2076,23 @@ function editRecord(id) {
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Serial No</label><input type="text" id="edit-serial" value="' + esc(rec.serial_no) + '" readonly style="opacity:.6;"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Vehicle Number</label><input type="text" id="edit-vehicle" value="' + esc(rec.vehicle_number) + '"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Challan No</label><input type="text" id="edit-challan" value="' + esc(rec.challan_number) + '"></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From</label><input type="text" id="edit-from" list="dl-edit-from"><datalist id="dl-edit-from"></datalist></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To</label><input type="text" id="edit-to" list="dl-edit-to"><datalist id="dl-edit-to"></datalist></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">From</label><input type="text" id="edit-from" value="' + esc(rec.vehicle_from) + '" oninput="updateEditToOptionsForFrom()"></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">To</label><input type="text" id="edit-to" value="' + esc(rec.vehicle_to) + '" list="dl-edit-to"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Department</label><select id="edit-loader" onchange="autoSetEditRate()"><option value="Yarn MCD"' + (rec.loader_name==='Yarn MCD'?' selected':'') + '>Yarn MCD</option><option value="Yarn Dyeing MCD"' + (rec.loader_name==='Yarn Dyeing MCD'?' selected':'') + '>Yarn Dyeing MCD</option><option value="Grey Fabric MCD"' + (rec.loader_name==='Grey Fabric MCD'?' selected':'') + '>Grey Fabric MCD</option><option value="Finish Fabric MCD"' + (rec.loader_name==='Finish Fabric MCD'?' selected':'') + '>Finish Fabric MCD</option><option value="Chemical MCD"' + (rec.loader_name==='Chemical MCD'?' selected':'') + '>Chemical MCD</option><option value="Commercial Shipment"' + (rec.loader_name==='Commercial Shipment'?' selected':'') + '>Commercial Shipment</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Work Type</label><select id="edit-worktype" onchange="updateEditFields()"><option value="Loading"' + (rec.work_type==='Loading'?' selected':'') + '>Loading</option><option value="Unloading"' + (rec.work_type==='Unloading'?' selected':'') + '>Unloading</option></select></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Net Weight (KG)</label><input type="number" step="0.01" id="edit-netweight" value="' + rec.net_weight_kg + '"></div>';
   html += '<div id="edit-receive-field"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Receive Qty (KG - Scale Weight)</label><input type="number" step="0.01" id="edit-receiveqty" value="' + (rec.receive_qty_kg||0) + '" oninput="calcEditTotal()"></div>';
   html += '<div id="edit-delivery-field" class="hidden"><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Delivery Qty (KG - Scale Weight)</label><input type="number" step="0.01" id="edit-deliveryqty" value="' + (rec.delivery_qty_kg||0) + '" oninput="calcEditTotal()"></div>';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Rate Per Ton</label><input type="number" step="0.01" id="edit-rate" value="' + rec.rate_per_ton + '" oninput="calcEditTotal()"></div>';
-  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Total Amount (Live)</label><input type="text" id="edit-total" readonly value="\u09F3' + (rec.total_amount||0).toLocaleString() + '" style="font-weight:700;color:#4ade80 !important;"></div>';
+  html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Total Amount (Live)</label><input type="text" id="edit-total" readonly value="\u09F3' + (rec.total_amount||0).toLocaleString() + '" style="font-weight:700;color:#4ade80 !important;"></div';
   html += '<div><label class="text-xs font-semibold block mb-1" style="color:#94a3b8;">Remarks</label><input type="text" id="edit-remarks" value="' + esc(rec.remarks || '') + '"></div>';
   html += '</div>';
   container.innerHTML = html;
   document.getElementById('edit-modal').classList.remove('hidden');
   document.getElementById('edit-modal').dataset.recordId = id;
-
-  // Set From / To values directly via JS to avoid any HTML attribute parsing issues.
-  // This guarantees the saved values are visible when the modal opens.
-  var fromEl = document.getElementById('edit-from');
-  var toEl = document.getElementById('edit-to');
-  if (fromEl) fromEl.value = rec.vehicle_from || '';
-  if (toEl)   toEl.value   = rec.vehicle_to   || '';
-
   updateEditFields();
-  // Populate From/To datalists (no restriction — user can pick any company)
-  populateEditDatalists();
+  // Apply From->To restriction based on the loaded From value
+  updateEditToOptionsForFrom();
   lucide.createIcons();
 }
 
